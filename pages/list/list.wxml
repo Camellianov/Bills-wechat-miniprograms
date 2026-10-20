@@ -1,2 +1,114 @@
-<!--pages/list/list.wxml-->
-<text>pages/list/list.wxml</text>
+<privacy-mask show="{{masked}}" />
+
+<view class="page">
+  <!-- 初始化失败提示 -->
+  <view wx:if="{{initError}}" class="errbar">
+    <text class="errbar__t">{{initError}}</text>
+    <view class="errbar__btn" bindtap="onRetry">重试</view>
+  </view>
+
+  <!-- 当前账本 -->
+  <view class="lbar">
+    <view class="lgico" style="background:{{ledgerIconColor}}">
+      <view class="lgico__spine"></view>
+    </view>
+    <text class="lbar__name">{{ledgerName || '家庭账本'}}</text>
+    <view class="lbar__btn" bindtap="onGoLedgers">切换账本</view>
+  </view>
+
+  <!-- 月份切换 -->
+  <view class="mbar">
+    <view class="mbar__arrow" bindtap="onPrevMonth">
+      <view class="tri tri--left"></view>
+    </view>
+    <view class="mbar__label">{{monthLabel}}</view>
+    <view class="mbar__arrow {{monthIdx>=0?'is-off':''}}" bindtap="onNextMonth">
+      <view class="tri tri--right"></view>
+    </view>
+    <view class="mbar__member" bindtap="onGoMembers">成员</view>
+  </view>
+
+  <!-- 本月合计 -->
+  <view class="sum">
+    <view class="sum__col">
+      <text class="sum__k">支出</text>
+      <text class="sum__v is-expense">{{currency}}{{sumExpenseText}}</text>
+    </view>
+    <view class="sum__col">
+      <text class="sum__k">收入</text>
+      <text class="sum__v is-income">{{currency}}{{sumIncomeText}}</text>
+    </view>
+    <view class="sum__col">
+      <text class="sum__k">结余</text>
+      <text class="sum__v">{{currency}}{{sumBalanceText}}</text>
+    </view>
+  </view>
+
+  <!-- 账单列表 -->
+  <scroll-view class="body" scroll-y enhanced show-scrollbar="{{false}}" bindscrolltolower="onLoadMore">
+    <view wx:for="{{groups}}" wx:key="dayText" class="grp">
+      <view class="grp__head">
+        <text class="grp__day">{{item.dayText}}</text>
+        <text class="grp__sum">{{item.sumText}}</text>
+      </view>
+      <view wx:for="{{item.items}}" wx:for-item="it" wx:key="_id"
+        class="item" data-id="{{it._id}}" bindtap="onEditTap">
+        <text class="item__em">{{it.categoryEmoji}}</text>
+        <view class="item__main">
+          <text class="item__name">{{it.categoryName}}</text>
+          <text wx:if="{{it.note}}" class="item__note">{{it.note}}</text>
+        </view>
+        <text class="item__amt {{it.type==='income'?'is-income':'is-expense'}}">{{it.sign}}{{currency}}{{it.amountText}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{empty && !loading}}" class="empty">本月还没有记账</view>
+    <view wx:if="{{loading}}" class="hint">加载中...</view>
+    <view wx:if="{{done && !empty && groups.length}}" class="hint">没有更多了</view>
+    <view class="pad"></view>
+  </scroll-view>
+</view>
+
+<!-- 编辑弹层 -->
+<view wx:if="{{editing}}" class="emask" bindtap="onEditClose" catchtouchmove="noop">
+  <view class="epanel" catchtap="noop">
+    <view class="epanel__title">编辑这笔</view>
+
+    <view class="eseg">
+      <view class="eseg__i {{editing.type==='expense'?'is-on':''}}" data-type="expense" bindtap="onEditType">支出</view>
+      <view class="eseg__i {{editing.type==='income'?'is-on':''}}" data-type="income" bindtap="onEditType">收入</view>
+    </view>
+
+    <view class="eamt">
+      <text class="eamt__cur">{{currency}}</text>
+      <input class="eamt__input" type="digit" value="{{editing.amountText}}" placeholder="0.00" bindinput="onEditAmount" />
+    </view>
+
+    <view class="ecats">
+      <view wx:for="{{editCats}}" wx:key="id"
+        class="ecat {{editing.categoryId===item.id?'is-on':''}}"
+        data-id="{{item.id}}" bindtap="onEditCat">
+        <text class="ecat__em">{{item.emoji}}</text>
+        <text class="ecat__n">{{item.name}}</text>
+      </view>
+    </view>
+
+    <picker mode="date" value="{{editing.dateStr}}" start="2000-01-01" end="{{todayStr}}" bindchange="onEditDate">
+      <view class="erow">
+        <text class="erow__k">日期</text>
+        <text class="erow__v">{{editing.dateStr}}</text>
+      </view>
+    </picker>
+
+    <view class="erow">
+      <text class="erow__k">备注</text>
+      <input class="erow__input" value="{{editing.note}}" placeholder="选填" maxlength="100" bindinput="onEditNote" />
+    </view>
+
+    <view class="ebtns">
+      <view class="ebtn ebtn--del" bindtap="onEditDelete">删除</view>
+      <view class="ebtn ebtn--cancel" bindtap="onEditClose">取消</view>
+      <view class="ebtn ebtn--save" bindtap="onEditSave">保存</view>
+    </view>
+  </view>
+</view>

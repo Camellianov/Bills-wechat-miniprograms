@@ -1,90 +1,95 @@
 <privacy-mask show="{{masked}}" />
 
 <view class="page">
-  <!-- 1. 分类 + 日期 -->
-  <view class="top">
-    <view class="topbar">
-      <view class="seg">
-        <view class="seg__i {{type==='expense'?'is-on':''}}" data-type="expense" bindtap="onSwitchType">支出</view>
-        <view class="seg__i {{type==='income'?'is-on':''}}" data-type="income" bindtap="onSwitchType">收入</view>
-      </view>
-      <view wx:if="{{pendingCount}}" class="sync">待同步 {{pendingCount}} 笔</view>
-    </view>
-
-  <!-- 初始化失败提示（常驻可见，便于定位配置问题） -->
   <view wx:if="{{initError}}" class="errbar">
     <text class="errbar__t">{{initError}}</text>
     <view class="errbar__btn" bindtap="onRetry">重试</view>
   </view>
 
-  <!-- 类型切换 -->
-  <view class="seg">
-    <view class="seg__item {{type==='expense'?'is-on':'is-exp'}}" data-type="expense" bindtap="onSwitchType">支出</view>
-    <view class="seg__item {{type==='income'?'is-on':'is-inc'}}" data-type="income" bindtap="onSwitchType">收入</view>
+  <!-- 顶栏：类型切换 + 待同步 + 分类管理入口 -->
+  <view class="topbar">
+    <view class="seg">
+      <view class="seg__i {{type==='expense'?'is-on':''}}" data-type="expense" bindtap="onSwitchType">支出</view>
+      <view class="seg__i {{type==='income'?'is-on':''}}" data-type="income" bindtap="onSwitchType">收入</view>
+    </view>
+    <view wx:if="{{pendingCount}}" class="sync">待同步 {{pendingCount}} 笔</view>
+    <view class="mng" bindtap="onGoCats">分类管理</view>
   </view>
 
-  <!-- 金额卡 -->
+  <!-- ① 分类 -->
+  <view class="cats">
+    <view wx:for="{{categories}}" wx:key="id"
+      class="cat {{categoryId===item.id?'is-on':''}}"
+      data-id="{{item.id}}" bindtap="onPickCategory">
+      <text class="cat__em">{{item.emoji}}</text>
+      <text class="cat__name">{{item.name}}</text>
+    </view>
+    <view class="cat cat--add" bindtap="onAddTap">
+      <view class="plus"></view>
+      <text class="cat__name">自定义</text>
+    </view>
+  </view>
+
+  <!-- ② 日期 -->
+  <picker mode="date" value="{{dateStr}}" start="2000-01-01" end="{{todayStr}}" bindchange="onDateChange">
+    <view class="date">
+      <text class="date__k">日期</text>
+      <view class="date__v">{{dateStr}}<view class="tri tri--right"></view></view>
+    </view>
+  </picker>
+
+  <!-- ③ 金额显示行 -->
   <view class="amt">
-    <text class="amt__cur" wx:if="{{type==='income'}}">+ {{currency}}</text>
-    <text class="amt__cur" wx:else>- {{currency}}</text>
-    <text class="amt__num">{{amountText}}</text>
+    <text class="amt__cur">{{currency}}</text>
+    <text class="amt__num {{type==='income'?'is-income':''}}">{{amountText}}</text>
   </view>
 
-  <!-- 可滚动主体：分类 / 日期 / 备注 / 保存 / 最近记录 -->
-  <scroll-view class="body" scroll-y enhanced show-scrollbar="{{false}}">
-    <view class="cats">
-      <view wx:for="{{categories}}" wx:key="id"
-        class="cat {{categoryId===item.id?'is-on':''}}"
-        data-id="{{item.id}}" bindtap="onPickCategory">
-        <text class="cat__em">{{item.emoji}}</text>
-        <text class="cat__name">{{item.name}}</text>
-      </view>
+  <!-- ④ 数字键盘 -->
+  <view class="kb">
+    <view wx:for="{{kbRows}}" wx:key="*this"
+      class="key {{item===delKey?'is-del':''}}"
+      data-k="{{item}}" bindtap="onKey">
+      <text wx:if="{{item===delKey}}" class="key__del">{{item}}</text>
+      <text wx:else class="key__t">{{item}}</text>
     </view>
+  </view>
 
-    <view class="line">
-      <picker mode="date" value="{{dateStr}}" start="2000-01-01" end="{{todayStr}}" bindchange="onDateChange">
-        <view class="line__row">
-          <text class="line__label">日期</text>
-          <view class="line__value">{{dateStr}}<view class="line__arrow tri tri--right"></view></view>
-        </view>
-      </picker>
-    </view>
+  <!-- ⑤ 备注 -->
+  <view class="note">
+    <text class="note__k">备注</text>
+    <input class="note__input" value="{{note}}" placeholder="选填，最多100字" maxlength="100" bindinput="onNoteInput" />
+  </view>
 
-    <view class="line">
-      <view class="line__row">
-        <text class="line__label">备注</text>
-        <input class="line__input" value="{{note}}" placeholder="选填，最多100字" maxlength="100" bindinput="onNoteInput" />
-      </view>
-    </view>
+  <!-- ⑥ 保存 -->
+  <view class="save {{saving?'is-off':''}}" bindtap="onSave">保存</view>
+</view>
 
-<!-- 自定义分类弹层 -->
-<view wx:if="{{adding}}" class="emask" bindtap="onAddClose" catchtouchmove="noop">
+<!-- 新增自定义分类弹层 -->
+<view wx:if="{{catDlg}}" class="emask" bindtap="onCatClose" catchtouchmove="noop">
   <view class="epanel" catchtap="noop">
-    <view class="epanel__title">{{catMode==='edit'?'修改分类':'新增自定义分类'}}</view>
+    <view class="epanel__title">新增自定义分类</view>
 
     <view class="erow">
       <text class="erow__k">名称</text>
-      <input class="erow__input" value="{{addName}}" placeholder="最多 8 个字" maxlength="8" bindinput="onAddName" />
+      <input class="erow__input" value="{{catName}}" placeholder="最多 8 个字" maxlength="8" bindinput="onCatName" />
     </view>
 
     <view class="erow erow--tall">
       <text class="erow__k">图标</text>
       <view class="eemoji">
         <view wx:for="{{emojiChoices}}" wx:key="*this"
-          class="eemoji__i {{addEmoji===item?'is-on':''}}"
-          data-e="{{item}}" bindtap="onAddEmoji">
+          class="eemoji__i {{catEmoji===item?'is-on':''}}"
+          data-e="{{item}}" bindtap="onCatEmoji">
           <text class="eemoji__t">{{item}}</text>
         </view>
-        <view class="item__amt {{item.type==='income'?'is-income':'is-expense'}}">{{item.sign}}{{currency}}{{item.amountText}}</view>
       </view>
     </view>
-  </scroll-view>
 
-    <view class="etip">{{catMode==='edit'?'修改后使用该分类的账单会同步显示新名称':'将作为' + (type==='expense'?'支出':'收入') + '分类，添加到列表末尾'}}</view>
+    <view class="etip">将作为{{type==='expense'?'支出':'收入'}}分类，添加到列表末尾</view>
 
     <view class="ebtns">
-      <view class="ebtn ebtn--cancel" bindtap="onAddClose">取消</view>
-      <view class="ebtn ebtn--save" bindtap="onAddSave">保存</view>
+      <view class="ebtn ebtn--cancel" bindtap="onCatClose">取消</view>
+      <view class="ebtn ebtn--save" bindtap="onCatSave">保存</view>
     </view>
   </view>
 </view>

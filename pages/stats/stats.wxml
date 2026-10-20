@@ -1,2 +1,65 @@
-<!--pages/stats/stats.wxml-->
-<text>pages/stats/stats.wxml</text>
+<privacy-mask show="{{masked}}" />
+
+<view class="page">
+  <view wx:if="{{initError}}" class="errbar">
+    <text class="errbar__t">{{initError}}</text>
+    <view class="errbar__btn" bindtap="onRetry">重试</view>
+  </view>
+
+  <!-- 月份切换 -->
+  <view class="mbar">
+    <view class="mbar__arrow" bindtap="onPrevMonth">
+      <view class="tri tri--left"></view>
+    </view>
+    <view class="mbar__label">{{monthLabel}}</view>
+    <view class="mbar__arrow {{monthIdx>=0?'is-off':''}}" bindtap="onNextMonth">
+      <view class="tri tri--right"></view>
+    </view>
+  </view>
+
+  <!-- 收支类型 -->
+  <view class="seg">
+    <view class="seg__i {{type==='expense'?'is-on':''}}" data-type="expense" bindtap="onSwitchType">支出</view>
+    <view class="seg__i {{type==='income'?'is-on':''}}" data-type="income" bindtap="onSwitchType">收入</view>
+  </view>
+
+  <!-- 环形图 -->
+  <view class="card">
+    <view class="card__t">分类占比</view>
+    <view class="piebox">
+      <canvas type="2d" id="pie" class="pie"></canvas>
+      <view class="piecenter">
+        <text class="piecenter__k">合计</text>
+        <text class="piecenter__v">{{currency}}{{totalText}}</text>
+      </view>
+    </view>
+    <view wx:if="{{empty}}" class="empty">本月还没有该类型的记录</view>
+    <view wx:for="{{legends}}" wx:key="id" class="lg">
+      <view class="lg__dot" style="background:{{item.color}}"></view>
+      <text class="lg__em">{{item.emoji}}</text>
+      <text class="lg__name">{{item.name}}</text>
+      <text class="lg__pct">{{item.percent}}%</text>
+      <text class="lg__amt">{{currency}}{{item.amountText}}</text>
+    </view>
+  </view>
+
+  <!-- 近半年趋势 -->
+  <view class="card">
+    <view class="card__t">近半年趋势</view>
+    <view class="trend">
+      <view wx:for="{{trends}}" wx:key="ym" class="bar">
+        <view class="bar__wrap">
+          <view class="bar__exp" style="height:{{item.expenseH}}%"></view>
+          <view class="bar__inc" style="height:{{item.incomeH}}%"></view>
+        </view>
+        <text class="bar__lab">{{item.ym}}</text>
+      </view>
+    </view>
+    <view class="tiplegend">
+      <view class="tiplegend__i"><view class="tiplegend__d is-exp"></view>支出</view>
+      <view class="tiplegend__i"><view class="tiplegend__d is-inc"></view>收入</view>
+    </view>
+  </view>
+
+  <view class="pad"></view>
+</view>

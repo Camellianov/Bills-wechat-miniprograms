@@ -1,0 +1,59 @@
+<privacy-mask show="{{masked}}" />
+
+<view class="page">
+  <view wx:if="{{initError}}" class="errbar">
+    <text class="errbar__t">{{initError}}</text>
+    <view class="errbar__btn" bindtap="onRetry">重试</view>
+  </view>
+
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">我的账本</text>
+    </view>
+    <view wx:for="{{ledgers}}" wx:key="ledgerId" class="row {{item.isCurrent?'is-on':''}}">
+      <view class="lgico" style="background:{{item.iconColor}}">
+        <view class="lgico__spine"></view>
+      </view>
+      <view class="row__main">
+        <text class="row__name">{{item.name}}</text>
+        <text class="row__role">{{item.roleText}}<text wx:if="{{item.isCurrent}}" class="row__cur">（当前）</text></text>
+      </view>
+      <view wx:if="{{!item.isCurrent}}" class="row__btn"
+        data-id="{{item.ledgerId}}" data-current="{{item.isCurrent}}" bindtap="onSwitch">切换</view>
+      <view wx:if="{{item.canDelete}}" class="row__btn row__btn--del"
+        data-id="{{item.ledgerId}}" data-name="{{item.name}}" bindtap="onDelete">删除</view>
+    </view>
+    <view wx:if="{{!ledgers.length}}" class="empty">暂无账本</view>
+  </view>
+
+  <view class="add" bindtap="onAddTap">+ 新建账本</view>
+  <view class="tip tip--pad">删除账本会同时删除该账本下的全部账单；至少保留一个账本。非房主的账本只能切换，不能删除。</view>
+</view>
+
+<view wx:if="{{dlg}}" class="emask" bindtap="onDlgClose" catchtouchmove="noop">
+  <view class="epanel" catchtap="noop">
+    <view class="epanel__title">新建账本</view>
+
+    <view class="erow">
+      <text class="erow__k">名称</text>
+      <input class="erow__input" value="{{dlgName}}" placeholder="最多 12 个字" maxlength="12" bindinput="onDlgName" />
+    </view>
+
+    <view class="erow erow--tall">
+      <text class="erow__k">图标颜色</text>
+      <view class="ecolors">
+        <view wx:for="{{colors}}" wx:key="v"
+          class="ecolors__i {{dlgColor===item.v?'is-on':''}}"
+          style="background:{{item.v}}"
+          data-c="{{item.v}}" bindtap="onDlgColor"></view>
+      </view>
+    </view>
+
+    <view class="etip">已选：{{dlgColorName}}</view>
+
+    <view class="ebtns">
+      <view class="ebtn ebtn--cancel" bindtap="onDlgClose">取消</view>
+      <view class="ebtn ebtn--save" bindtap="onDlgSave">创建</view>
+    </view>
+  </view>
+</view>

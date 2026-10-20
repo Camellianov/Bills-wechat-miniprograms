@@ -116,25 +116,28 @@ async function monthSummary(e) {
   const { ledgerId } = e
   await G.assertMember(ledgerId, openid)
 
+  // 用数据库聚合求和，避免分页上限（100 条）导致合计偏小
   const cond = { ledgerId }
   if (e.startAt || e.endAt) {
-    cond.occuredAt = {}
-    if (e.startAt) cond.occuredAt.$gte = new Date(e.startAt)
-    if (e.endAt) cond.occuredAt.$lt = new Date(e.endAt)
+    cond.occuredAt = G._.and([
+      G._.gte(new Date(e.startAt)),
+      G._.lt(new Date(e.endAt))
+    ])
   }
 
-  const res = await G.db.collection('bills')
-    .where(cond)
-    .limit(G.MAX_LIMIT)
-    .get()
+  const res = await G.db.collection('bills').aggregate()
+    .match(cond)
+    .group({ _id: '$type', total: G.$.sum('$amountFen') })
+    .limit(2)
+    .end()
 
   let expenseFen = 0
   let incomeFen = 0
-  res.data.forEach(b => {
-    if (b.type === 'expense') expenseFen += b.amountFen
-    else incomeFen += b.amountFen
+  res.list.forEach(x => {
+    if (x._id === 'expense') expenseFen = x.total
+    else if (x._id === 'income') incomeFen = x.total
   })
-  return { ok: true, expenseFen, incomeFen, balanceFen: incomeFen - expenseFen, count: res.data.length }
+  return { ok: true, expenseFen, incomeFen, balanceFen: incomeFen - expenseFen }
 }
 
 /** 修改一笔：update 强制带 _id + ledgerId，杜绝跨账本篡改 */
