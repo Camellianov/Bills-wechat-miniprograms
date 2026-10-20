@@ -1,0 +1,9 @@
+{
+  "name": "bill",
+  "version": "1.0.0",
+  "description": "账单读写（成员校验 + 幂等同步）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

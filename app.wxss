@@ -1,0 +1,59 @@
+page {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1a1a1a;
+  --sub: #8a8f99;
+  --line: #eceef2;
+  --expense: #ff5b4a;
+  --income: #17b26a;
+  --brand: #2b6cff;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 28rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+view, text, input, scroll-view {
+  box-sizing: border-box;
+}
+
+/* 纯 CSS 三角箭头：不依赖任何字符，避免实体转义/特殊字符问题 */
+.tri {
+  width: 0;
+  height: 0;
+  border-top: 10rpx solid transparent;
+  border-bottom: 10rpx solid transparent;
+}
+.tri--left { border-right: 14rpx solid #8a8f99; }
+.tri--right { border-left: 14rpx solid #8a8f99; }
+
+/* 账本图标：形状固定（竖版账本 + 左侧书脊），颜色由 inline style 决定 */
+.lgico {
+  position: relative;
+  flex: none;
+  width: 44rpx;
+  height: 56rpx;
+  border-radius: 8rpx;
+  border: 2rpx solid rgba(0, 0, 0, 0.12);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.lgico__spine {
+  position: absolute;
+  left: 8rpx;
+  top: 10rpx;
+  bottom: 10rpx;
+  width: 4rpx;
+  border-radius: 2rpx;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.row-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 96rpx;
+  padding: 0 28rpx;
+  background: var(--card);
+  border-bottom: 2rpx solid var(--line);
+}

@@ -1,0 +1,9 @@
+{
+  "name": "ledger",
+  "version": "1.0.0",
+  "description": "账本/成员初始化与上下文",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "privacy-mask": "/components/privacy-mask/privacy-mask"
+  },
+  "navigationBarTitleText": "成员与邀请"
+}

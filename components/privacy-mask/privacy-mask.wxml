@@ -1,0 +1,7 @@
+<view wx:if="{{show}}" class="pmask" catchtouchmove="noop">
+  <view class="pmask__box">
+    <text class="pmask__icon">🔒</text>
+    <text class="pmask__title">内容已隐藏</text>
+    <text class="pmask__tip">回到前台后自动恢复</text>
+  </view>
+</view>

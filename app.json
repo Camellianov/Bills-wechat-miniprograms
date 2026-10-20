@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/record/record",
+    "pages/list/list",
+    "pages/stats/stats",
+    "pages/category/category",
+    "pages/member/member",
+    "pages/ledger/ledger"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "backgroundColor": "#f6f7f9",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "记一笔",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "color": "#8a8f99",
+    "selectedColor": "#2b6cff",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/record/record",
+        "text": "记一笔"
+      },
+      {
+        "pagePath": "pages/list/list",
+        "text": "账单"
+      },
+      {
+        "pagePath": "pages/stats/stats",
+        "text": "统计"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}
