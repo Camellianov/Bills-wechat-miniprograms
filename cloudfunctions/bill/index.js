@@ -189,14 +189,10 @@ async function categoryStats(e) {
   await G.assertMember(ledgerId, openid)
   const type = G.assertType(e.type)
 
-  const cond = { ledgerId, type }
-  cond.occuredAt = G._.and([
-    G._.gte(new Date(e.startAt)),
-    G._.lt(new Date(e.endAt))
-  ])
-
+  // 用连续两个 match 代替 _.and：聚合管道里这样更稳，避免操作符兼容性问题
   const res = await G.db.collection('bills').aggregate()
-    .match(cond)
+    .match({ ledgerId: ledgerId, type: type, occuredAt: G._.gte(new Date(e.startAt)) })
+    .match({ occuredAt: G._.lt(new Date(e.endAt)) })
     .group({ _id: '$categoryId', total: G.$.sum('$amountFen') })
     .limit(G.MAX_LIMIT)
     .end()
@@ -215,13 +211,9 @@ async function monthlyTrends(e) {
   const months = Array.isArray(e.months) ? e.months.slice(0, 12) : []
 
   const tasks = months.map(m => {
-    const cond = { ledgerId }
-    cond.occuredAt = G._.and([
-      G._.gte(new Date(m.startAt)),
-      G._.lt(new Date(m.endAt))
-    ])
     return G.db.collection('bills').aggregate()
-      .match(cond)
+      .match({ ledgerId: ledgerId, occuredAt: G._.gte(new Date(m.startAt)) })
+      .match({ occuredAt: G._.lt(new Date(m.endAt)) })
       .group({ _id: '$type', total: G.$.sum('$amountFen') })
       .limit(2)
       .end()

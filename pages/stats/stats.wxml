@@ -45,20 +45,30 @@
 
   <!-- 近半年趋势 -->
   <view class="card">
-    <view class="card__t">近半年趋势</view>
-    <view class="trend">
-      <view wx:for="{{trends}}" wx:key="ym" class="bar">
-        <view class="bar__wrap">
-          <view class="bar__exp" style="height:{{item.expenseH}}%"></view>
-          <view class="bar__inc" style="height:{{item.incomeH}}%"></view>
+    <view class="card__t">近半年趋势<text class="card__n">（{{type==='expense'?'支出':'收入'}}）</text></view>
+    <view wx:if="{{trendError}}" class="errbar">
+      <text class="errbar__t">{{trendError}}</text>
+      <view class="errbar__btn" bindtap="onRetry">重试</view>
+    </view>
+    <block wx:elif="{{trendEmpty}}">
+      <view class="empty">{{trendEmptyText}}</view>
+    </block>
+    <block wx:else>
+      <view class="trend">
+        <view wx:for="{{trends}}" wx:key="ym" class="bar">
+          <text class="bar__val">{{item.topText}}</text>
+          <view class="bar__wrap">
+            <view wx:if="{{type==='expense'}}" class="bar__exp" style="height:{{item.expenseH}}rpx"></view>
+            <view wx:else class="bar__inc" style="height:{{item.incomeH}}rpx"></view>
+          </view>
+          <text class="bar__lab">{{item.ym}}</text>
         </view>
-        <text class="bar__lab">{{item.ym}}</text>
       </view>
-    </view>
-    <view class="tiplegend">
-      <view class="tiplegend__i"><view class="tiplegend__d is-exp"></view>支出</view>
-      <view class="tiplegend__i"><view class="tiplegend__d is-inc"></view>收入</view>
-    </view>
+      <view class="tiplegend">
+        <view wx:if="{{type==='expense'}}" class="tiplegend__i"><view class="tiplegend__d is-exp"></view>支出</view>
+        <view wx:else class="tiplegend__i"><view class="tiplegend__d is-inc"></view>收入</view>
+      </view>
+    </block>
   </view>
 
   <view class="pad"></view>

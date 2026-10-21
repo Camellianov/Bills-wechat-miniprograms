@@ -7,6 +7,9 @@ const sh = require('../../utils/shanghai.js')
 // 环形图配色（固定调色板，不依赖图片资源）
 const PALETTE = ['#2b6cff', '#17b26a', '#ff9500', '#8e5cf6', '#ff5b4a', '#ff7eb6', '#34c759', '#8a8f99', '#e54d4d', '#00b5ad']
 
+// 柱子高度用绝对 rpx：百分比高度依赖父级有确定高度，在 flex 容器里会失效
+const MAX_BAR_H = 160
+
 Page({
   data: {
     masked: false,
@@ -19,6 +22,9 @@ Page({
     empty: false,
     legends: [],
     trends: [],
+    trendEmpty: false,
+    trendEmptyText: '',
+    trendError: '',
     loading: false
   },
 
@@ -113,34 +119,36 @@ Page({
       endAt: r.endAt.toISOString()
     })
 
-    if (!res.ok) {
-      this.setData({ loading: false })
+    if (res.ok) {
+      const totalFen = res.totalFen || 0
+      const list = res.list || []
+      const legends = list.map((x, i) => {
+        const cat = store.getCategory(x._id)
+        return {
+          id: x._id,
+          emoji: cat.emoji,
+          name: cat.name,
+          amountText: fen.fen2yuan(x.total),
+          percent: totalFen ? Math.round((x.total / totalFen) * 100) : 0,
+          color: PALETTE[i % PALETTE.length]
+        }
+      })
+      this._slices = list.map((x, i) => ({ total: x.total, color: PALETTE[i % PALETTE.length] }))
+      this._total = totalFen
+
+      this.setData({
+        loading: false,
+        legends: legends,
+        totalText: fen.fen2yuan(totalFen),
+        empty: !legends.length
+      })
+    } else {
+      // 占比失败也要让趋势图继续加载，两个图互不阻塞
       api.toastError(res)
-      return
+      this._slices = []
+      this._total = 0
+      this.setData({ loading: false, legends: [], totalText: '0.00', empty: true })
     }
-
-    const totalFen = res.totalFen || 0
-    const list = res.list || []
-    const legends = list.map((x, i) => {
-      const cat = store.getCategory(x._id)
-      return {
-        id: x._id,
-        emoji: cat.emoji,
-        name: cat.name,
-        amountText: fen.fen2yuan(x.total),
-        percent: totalFen ? Math.round((x.total / totalFen) * 100) : 0,
-        color: PALETTE[i % PALETTE.length]
-      }
-    })
-    this._slices = list.map((x, i) => ({ total: x.total, color: PALETTE[i % PALETTE.length] }))
-    this._total = totalFen
-
-    this.setData({
-      loading: false,
-      legends: legends,
-      totalText: fen.fen2yuan(totalFen),
-      empty: !legends.length
-    })
     this.drawPie()
 
     // 近半年趋势
@@ -149,19 +157,31 @@ Page({
       return { ym: pair2[1] + '月', startAt: rr.startAt.toISOString(), endAt: rr.endAt.toISOString() }
     })
     const tr = await api.call('bill', 'monthlyTrends', { ledgerId: ledgerId, months: months })
-    if (tr.ok) {
-      const listData = tr.list || []
-      const max = Math.max(1, ...listData.map(x => Math.max(x.expenseFen, x.incomeFen)))
-      this.setData({
-        trends: listData.map(x => ({
-          ym: x.ym,
-          expenseH: Math.round((x.expenseFen / max) * 100),
-          incomeH: Math.round((x.incomeFen / max) * 100),
-          expenseText: x.expenseFen ? fen.fen2yuan(x.expenseFen) : '',
-          incomeText: x.incomeFen ? fen.fen2yuan(x.incomeFen) : ''
-        }))
-      })
+    if (!tr.ok) {
+      // 不再静默失败：趋势出不来时把原因摆到页面上，才能定位
+      console.error('[stats] monthlyTrends failed:', tr)
+      this.setData({ trendError: api.errorText(tr, '趋势加载失败') })
+      api.toastError(tr)
+      return
     }
+
+    const listData = tr.list || []
+    // 每个视图只呈现一种类型，最大值也只取该类型，柱高才有可比性
+    const isExp = this.data.type === 'expense'
+    const amountOf = x => (isExp ? x.expenseFen : x.incomeFen)
+    const max = Math.max(1, ...listData.map(amountOf))
+    const hasAny = listData.some(x => amountOf(x) > 0)
+    this.setData({
+      trendError: '',
+      trendEmpty: !hasAny,
+      trendEmptyText: '近半年还没有' + (isExp ? '支出' : '收入') + '记录',
+      trends: listData.map(x => ({
+        ym: x.ym,
+        expenseH: x.expenseFen ? Math.max(8, Math.round((x.expenseFen / max) * MAX_BAR_H)) : 0,
+        incomeH: x.incomeFen ? Math.max(8, Math.round((x.incomeFen / max) * MAX_BAR_H)) : 0,
+        topText: amountOf(x) ? fen.fen2yuan(amountOf(x)) : ''
+      }))
+    })
   },
 
   /** 环形图：canvas 2d 手绘，无第三方库 */
