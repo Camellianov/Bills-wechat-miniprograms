@@ -1,6 +1,7 @@
 const api = require('../../utils/api.js')
 const store = require('../../utils/store.js')
 const bus = require('../../utils/bus.js')
+const tip = require('../../utils/tip.js')
 
 Page({
   data: {
@@ -181,14 +182,7 @@ Page({
 
   /** 辅助说明收进「!」符号，点击才展开，界面不堆小字 */
   onTipTap(e) {
-    const t = e.currentTarget.dataset.t
-    if (!t) return
-    wx.showModal({
-      content: t,
-      showCancel: false,
-      confirmText: '知道了',
-      confirmColor: '#6b93d6'
-    })
+    tip.showTip(e.currentTarget.dataset.t)
   },
 
   noop() {}

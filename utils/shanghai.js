@@ -21,12 +21,6 @@ function todayStr() {
   return `${t.y}-${p2(t.m)}-${p2(t.d)}`
 }
 
-/** "YYYY-MM-DD HH:mm" */
-function fmtDateTime(d) {
-  const t = parts(d)
-  return `${t.y}-${p2(t.m)}-${p2(t.d)} ${p2(t.hh)}:${p2(t.mm)}`
-}
-
 /** "MM-DD HH:mm" */
 function fmtShort(d) {
   const t = parts(d)
@@ -52,10 +46,11 @@ function monthRange(y, m) {
   return { startAt: monthStart(y, m), endAt: monthStart(m === 12 ? y + 1 : y, m === 12 ? 1 : m + 1) }
 }
 
-/** 当前北京时间所在自然月区间 */
-function currentMonthRange() {
+/** 距今第 idx 个月的 [年, 月]：0 = 本月，-1 = 上月（账单页 / 统计页共用） */
+function monthOf(idx) {
   const t = parts(new Date())
-  return monthRange(t.y, t.m)
+  const total = t.y * 12 + (t.m - 1) + idx
+  return [Math.floor(total / 12), (total % 12) + 1]
 }
 
 /** 近 n 个月（含本月）的 [y,m] 列表，从旧到新 */
@@ -80,6 +75,6 @@ function dateToOccuredAt(dateStr) {
 }
 
 module.exports = {
-  OFFSET, parts, todayStr, fmtDateTime, fmtShort, fmtMonth,
-  dayStart, monthStart, monthRange, currentMonthRange, recentMonths, dateToOccuredAt
+  parts, todayStr, fmtShort, fmtMonth,
+  dayStart, monthRange, recentMonths, dateToOccuredAt, monthOf
 }

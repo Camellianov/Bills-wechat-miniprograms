@@ -90,7 +90,6 @@ Page({
       this.applyCtx(store.getCtx())
     } else {
       // 停留在页面上的可见错误，避免只弹一次 toast 就没了线索
-      console.error('[record] initUser failed:', res)
       this.setData({ initError: api.errorText(res, '初始化失败') })
     }
   },

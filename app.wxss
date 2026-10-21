@@ -71,13 +71,3 @@ view, text, input, scroll-view {
   border-radius: 2rpx;
   background: rgba(0, 0, 0, 0.16);
 }
-
-.row-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 112rpx;
-  padding: 0 32rpx;
-  background: var(--card);
-  border-bottom: 1rpx solid var(--line);
-}

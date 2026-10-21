@@ -85,8 +85,28 @@ function assertDate(v) {
   return d
 }
 
+/** ID 必须是字符串：对象 / 数组会被数据库当作查询操作符展开（如 {$ne: ''}），
+ *  一旦拼进 where 条件就会命中全部文档，等同于守卫失效 */
+function assertId(v, name) {
+  if (typeof v !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(v)) {
+    throw err('PARAM', 'bad ' + (name || 'id'))
+  }
+  return v
+}
+
+/** 文档 _id：genId() 生成的 24 位小写十六进制 */
+function assertDocId(v, name) {
+  if (typeof v !== 'string' || !/^[0-9a-f]{24}$/.test(v)) {
+    throw err('PARAM', 'bad ' + (name || 'id'))
+  }
+  return v
+}
+
+/** 备注：截断 100 字，控制字符换成空格（否则会破坏 CSV 的单行结构） */
 function assertNote(v) {
-  return String(v == null ? '' : v).slice(0, 100)
+  return String(v == null ? '' : v)
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .slice(0, 100)
 }
 
 /** 分类必须属于该账本，且 type 匹配，防止客户端传脏 categoryId */
@@ -137,5 +157,6 @@ module.exports = {
   db, _, $, crypto, MAX_LIMIT, MAX_MEMBERS, DEFAULT_CATEGORIES,
   getOpenid, assertMember, assertOwner, getLedgerOrThrow, isCollectionMissing,
   assertAmountFen, assertDate, assertNote, assertCategory, assertType,
+  assertId, assertDocId,
   genInviteCode, genId, err
 }

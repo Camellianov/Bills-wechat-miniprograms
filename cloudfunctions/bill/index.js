@@ -144,7 +144,7 @@ async function monthSummary(e) {
 async function updateBill(e) {
   const openid = G.getOpenid()
   const { ledgerId, billId } = e
-  if (!billId) throw G.err('PARAM', 'billId required')
+  G.assertDocId(billId, 'billId')
 
   await G.assertMember(ledgerId, openid)
   const type = G.assertType(e.type)
@@ -174,7 +174,7 @@ async function updateBill(e) {
 async function deleteBill(e) {
   const openid = G.getOpenid()
   const { ledgerId, billId } = e
-  if (!billId) throw G.err('PARAM', 'billId required')
+  G.assertDocId(billId, 'billId')
 
   await G.assertMember(ledgerId, openid)
   const r = await G.db.collection('bills').where({ _id: billId, ledgerId }).remove()

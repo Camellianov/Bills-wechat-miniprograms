@@ -4,6 +4,7 @@ const bus = require('../../utils/bus.js')
 const fen = require('../../utils/fen.js')
 const currencyLib = require('../../utils/currency.js')
 const sh = require('../../utils/shanghai.js')
+const tip = require('../../utils/tip.js')
 
 Page({
   data: {
@@ -71,7 +72,6 @@ Page({
       this.setData({ initError: '' })
       this.apply(res.ledger)
     } else {
-      console.error('[settings] initUser failed:', res)
       this.setData({ initError: api.errorText(res, '初始化失败') })
     }
   },
@@ -259,31 +259,34 @@ Page({
         api.toastError(res)
         return
       }
+      // 存储设为私有后客户端不能再按 fileID 下载，改用云函数签发的临时链接
+      this._fileID = res.fileID
+      this._tempURL = res.tempFileURL || ''
+      const showDlg = () => this.setData({
+        exporting: false,
+        expDlg: true,
+        expFileName: res.fileName,
+        expCount: res.count
+      })
+
+      if (!this._tempURL) {
+        wx.hideLoading()
+        showDlg() // 没拿到链接也给弹层，用户可稍后重试
+        return
+      }
       // 先落到本地临时文件，分享时微信要求的是本地路径
-      wx.cloud.downloadFile({
-        fileID: res.fileID,
+      wx.downloadFile({
+        url: this._tempURL,
         success: d => {
           wx.hideLoading()
-          this.setData({
-            exporting: false,
-            expDlg: true,
-            expFileName: res.fileName,
-            expCount: res.count,
-            _fileID: res.fileID,
-            _tmpPath: d.tempFilePath
-          })
+          this._tmpPath = d.tempFilePath
+          showDlg()
         },
         fail: () => {
           wx.hideLoading()
           // 下载失败仍给出弹层，用户可改用复制链接
-          this.setData({
-            exporting: false,
-            expDlg: true,
-            expFileName: res.fileName,
-            expCount: res.count,
-            _fileID: res.fileID,
-            _tmpPath: ''
-          })
+          this._tmpPath = ''
+          showDlg()
         }
       })
     })
@@ -295,7 +298,7 @@ Page({
 
   /** 发送到微信好友：在好友列表里选「文件传输助手」即可传到电脑 */
   onExpSend() {
-    const path = this.data._tmpPath
+    const path = this._tmpPath
     const name = this.data.expFileName
     if (!path) { this.onExpCopy(); return }
     if (!wx.shareFileMessage) { this.onExpCopy(); return } // 低版本基础库兜底
@@ -306,37 +309,22 @@ Page({
       success: () => {
         this.setData({ expDlg: false })
       },
-      fail: e => {
-        console.error('[settings] shareFileMessage failed:', e)
+      fail: () => {
         wx.showToast({ title: '发送已取消', icon: 'none' })
       }
     })
   },
 
+  /** 复制临时下载链接：私有存储下链接由云函数签发，约 2 小时有效，过期需重新导出 */
   onExpCopy() {
-    const fileID = this._fileID || this.data._fileID || ''
-    if (!fileID) { wx.showToast({ title: '暂无可复制的链接', icon: 'none' }); return }
-    wx.cloud.getTempFileURL({
-      fileList: [fileID],
-      success: r => {
-        const item = r.fileList && r.fileList[0]
-        if (!item || !item.tempFileURL) { wx.showToast({ title: '获取链接失败', icon: 'none' }); return }
-        wx.setClipboardData({ data: item.tempFileURL }) // 系统会提示“内容已复制”
-      },
-      fail: () => wx.showToast({ title: '获取链接失败', icon: 'none' })
-    })
+    const url = this._tempURL || ''
+    if (!url) { wx.showToast({ title: '链接已过期，请重新导出', icon: 'none' }); return }
+    wx.setClipboardData({ data: url }) // 系统会提示“内容已复制”
   },
 
   /** 辅助说明收进「!」符号，点击才展开，界面不堆小字 */
   onTipTap(e) {
-    const t = e.currentTarget.dataset.t
-    if (!t) return
-    wx.showModal({
-      content: t,
-      showCancel: false,
-      confirmText: '知道了',
-      confirmColor: '#6b93d6'
-    })
+    tip.showTip(e.currentTarget.dataset.t)
   },
 
   noop() {}

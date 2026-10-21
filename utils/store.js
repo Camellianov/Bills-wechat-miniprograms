@@ -3,7 +3,6 @@
  * 仅用于离线可用与首屏秒开，不做权限依据（权限一律云函数校验）
  */
 const KEY_CTX = 'ledgerCtx'
-const KEY_RECENT = 'recentBills'
 
 function setCtx(ctx) {
   wx.setStorageSync(KEY_CTX, ctx)
@@ -47,20 +46,11 @@ function updateCategories(categories) {
   return c
 }
 
-function setRecent(list) {
-  wx.setStorageSync(KEY_RECENT, list || [])
-}
-
-function getRecent() {
-  return wx.getStorageSync(KEY_RECENT) || []
-}
-
 function clear() {
   wx.removeStorageSync(KEY_CTX)
-  wx.removeStorageSync(KEY_RECENT)
 }
 
 module.exports = {
   setCtx, getCtx, getLedgerId, getLedger, getCategories,
-  getCurrency, getCategory, updateCategories, setRecent, getRecent, clear
+  getCurrency, getCategory, updateCategories, clear
 }

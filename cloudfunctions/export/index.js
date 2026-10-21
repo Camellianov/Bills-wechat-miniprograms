@@ -82,15 +82,32 @@ async function exportLedger(e) {
     ? (e.startAt ? fmt(new Date(e.startAt), '') : 'start') + '_' +
       (e.endAt ? fmt(new Date(new Date(e.endAt).getTime() - 1000), '') : 'now')
     : fmt(now, '') + fmtTime(now)
-  const cloudPath = 'exports/' + openid + '/' + now.getTime() + '.csv'
+  // 带随机后缀：同一毫秒内导出两次会互相覆盖
+  const cloudPath = 'exports/' + openid + '/' + now.getTime() + '-' + G.genId().slice(0, 8) + '.csv'
   const up = await cloud.uploadFile({
     cloudPath: cloudPath,
     fileContent: Buffer.from(csv, 'utf8')
   })
 
+  // 存储按私有权限管理，客户端不能再按 fileID 直接下载，统一签发临时链接
+  // 注意：私有文件的临时链接默认仅 10 分钟有效，这里显式申请 2 小时；若平台拒绝该时长则退回默认
+  let tempFileURL = ''
+  try {
+    const tmp = await cloud.getTempFileURL({
+      fileList: [{ fileID: up.fileID, maxAge: 7200 }]
+    })
+    tempFileURL = (tmp.fileList && tmp.fileList[0] && tmp.fileList[0].tempFileURL) || ''
+  } catch (e) {
+    try {
+      const tmp = await cloud.getTempFileURL({ fileList: [up.fileID] })
+      tempFileURL = (tmp.fileList && tmp.fileList[0] && tmp.fileList[0].tempFileURL) || ''
+    } catch (e2) { /* 拿不到链接时前端走重新导出兜底 */ }
+  }
+
   return {
     ok: true,
     fileID: up.fileID,
+    tempFileURL: tempFileURL,
     fileName: (ledger.name || '账本') + '-' + stamp + '.csv',
     count: bills.length,
     keepDays: KEEP_DAYS
@@ -125,9 +142,16 @@ function toCsv(ledger, cats, bills, currency) {
   return '\uFEFF' + body // BOM：Excel 打开中文不乱码
 }
 
+/**
+ * CSV 单元格：包引号 + 转义双引号
+ * 额外防公式注入：= + @ 开头（或 - 后面不是数字）会被 Excel / WPS 当成公式执行，统一前置单引号
+ * 负数金额保持原样，仍能在表格里参与计算
+ */
 function esc(v) {
   const s = String(v == null ? '' : v)
-  return '"' + s.replace(/"/g, '""') + '"'
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .replace(/"/g, '""')
+  return '"' + (/^[=+@]/.test(s) || /^-[^0-9.]/.test(s) ? "'" + s : s) + '"'
 }
 
 function parts(d) {

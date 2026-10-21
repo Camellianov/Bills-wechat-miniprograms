@@ -10,14 +10,14 @@
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "backgroundColor": "#f6f7f9",
+    "backgroundColor": "#f4f6f9",
     "navigationBarBackgroundColor": "#ffffff",
     "navigationBarTitleText": "记一笔",
     "navigationBarTextStyle": "black"
   },
   "tabBar": {
-    "color": "#8a8f99",
-    "selectedColor": "#2b6cff",
+    "color": "#9aa4b2",
+    "selectedColor": "#6b93d6",
     "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [

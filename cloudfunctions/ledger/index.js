@@ -441,6 +441,8 @@ async function clearBills(e) {
 
 /** 统一上下文：当前账本 + 分类 + 角色 + 账本列表（不返回任何他人 openid） */
 async function buildContext(openid, members) {
+  // 成员被移除后成员列表可能为空，这里必须显式报错，否则下面取 members[0] 会直接崩成 500
+  if (!members || !members.length) throw G.err('NO_LEDGER', 'no ledger, need init')
   const cur = members.find(x => x.isCurrent) || members[0]
   const ids = members.map(x => x.ledgerId)
   let ls

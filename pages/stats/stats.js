@@ -71,7 +71,6 @@ Page({
       this.setData({ currency: store.getCurrency(), initError: '' })
       this.load()
     } else {
-      console.error('[stats] initUser failed:', res)
       this.setData({ initError: api.errorText(res, '初始化失败') })
     }
   },
@@ -79,12 +78,6 @@ Page({
   onRetry() {
     this.setData({ initError: '' })
     this.initCtx()
-  },
-
-  monthOf(idx) {
-    const t = sh.parts(new Date())
-    const total = t.y * 12 + (t.m - 1) + idx
-    return [Math.floor(total / 12), (total % 12) + 1]
   },
 
   onPrevMonth() {
@@ -108,7 +101,7 @@ Page({
     if (!ledgerId) { this.initCtx(); return }
     this.setData({ loading: true })
 
-    const pair = this.monthOf(this.data.monthIdx)
+    const pair = sh.monthOf(this.data.monthIdx)
     const y = pair[0], m = pair[1]
     this.setData({ monthLabel: sh.fmtMonth(y, m) })
 
@@ -160,8 +153,7 @@ Page({
     const tr = await api.call('bill', 'monthlyTrends', { ledgerId: ledgerId, months: months })
     if (!tr.ok) {
       // 不再静默失败：趋势出不来时把原因摆到页面上，才能定位
-      console.error('[stats] monthlyTrends failed:', tr)
-      this.setData({ trendError: api.errorText(tr, '趋势加载失败') })
+      this.setData({ loading: false, trendError: api.errorText(tr, '趋势加载失败') })
       api.toastError(tr)
       return
     }

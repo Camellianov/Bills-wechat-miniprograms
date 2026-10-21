@@ -101,7 +101,6 @@ Page({
       this.setData({ currency: store.getCurrency(), initError: '' })
       this.reload()
     } else {
-      console.error('[list] initUser failed:', res)
       this.setData({ initError: api.errorText(res, '初始化失败') })
     }
   },
@@ -109,12 +108,6 @@ Page({
   onRetry() {
     this.setData({ initError: '' })
     this.initCtx()
-  },
-
-  monthOf(idx) {
-    const t = sh.parts(new Date())
-    const total = t.y * 12 + (t.m - 1) + idx
-    return [Math.floor(total / 12), (total % 12) + 1]
   },
 
   onPrevMonth() {
@@ -131,7 +124,7 @@ Page({
     this._items = []
     this._cursor = null
     this.setData({ groups: [], done: false, empty: false })
-    const pair = this.monthOf(this.data.monthIdx)
+    const pair = sh.monthOf(this.data.monthIdx)
     this.setData({ monthLabel: sh.fmtMonth(pair[0], pair[1]) })
     await this.loadSummary(pair[0], pair[1])
     await this.loadList(pair[0], pair[1])
@@ -146,7 +139,7 @@ Page({
       startAt: r.startAt.toISOString(),
       endAt: r.endAt.toISOString()
     })
-    if (!res.ok) return
+    if (!res.ok) { api.toastError(res); return }
     this.setData({
       sumExpenseText: fen.fen2yuan(res.expenseFen || 0),
       sumIncomeText: fen.fen2yuan(res.incomeFen || 0),
@@ -259,7 +252,7 @@ Page({
 
   onLoadMore() {
     if (this.data.done || this.data.loading) return
-    const pair = this.monthOf(this.data.monthIdx)
+    const pair = sh.monthOf(this.data.monthIdx)
     this.loadList(pair[0], pair[1])
   },
 
@@ -339,7 +332,6 @@ Page({
       this.setData({ editing: null })
       wx.showToast({ title: '已保存', icon: 'success' })
       bus.emit('bill-changed')
-      this.reload()
     })
   },
 

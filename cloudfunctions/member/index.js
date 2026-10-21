@@ -35,7 +35,7 @@ async function setCurrent(openid, ledgerId) {
     .where({ openid: openid, ledgerId: G._.neq(ledgerId), isCurrent: true })
     .update({ data: { isCurrent: false } })
   await G.db.collection('members')
-    .where({ openid: openid, ledgerId: ledgerId })
+    .where({ openid: openid, ledgerId: ledgerId, status: 'active' })
     .update({ data: { isCurrent: true } })
 }
 
@@ -55,24 +55,39 @@ async function joinLedger(e) {
     throw G.err('EXPIRED', 'code expired')
   }
 
-  const exist = await G.db.collection('members')
-    .where({ ledgerId: ledger._id, openid: openid, status: 'active' })
+  // 历史记录（含退出 / 被移除的）一律复用：同一人在同一账本永远只保留一条文档。
+  // 此前退出后再加入是新建文档，一旦 (ledgerId, openid) 上有唯一约束就会撞重复键，
+  // 异常被外层吞成 INTERNAL，前端表现为「无法加入」
+  const mine = await G.db.collection('members')
+    .where({ ledgerId: ledger._id, openid: openid })
     .limit(1)
     .get()
-  if (exist.data.length) {
+
+  const now = new Date()
+
+  if (mine.data.length && mine.data[0].status === 'active') {
     await setCurrent(openid, ledger._id)
     return {
       ok: true, joined: false, alreadyMember: true,
-      ledgerId: ledger._id, name: ledger.name, role: exist.data[0].role
+      ledgerId: ledger._id, name: ledger.name, role: mine.data[0].role
     }
   }
 
+  // 人数上限对「重新加入」同样生效：被移除后账本里可能已有新成员补位
   const cnt = await G.db.collection('members')
     .where({ ledgerId: ledger._id, status: 'active' })
     .count()
   if (cnt.total >= G.MAX_MEMBERS) throw G.err('FULL', 'ledger full')
 
-  const now = new Date()
+  if (mine.data.length) {
+    // 复用历史文档恢复成员身份，不新建
+    await G.db.collection('members')
+      .where({ _id: mine.data[0]._id, ledgerId: ledger._id, openid: openid })
+      .update({ data: { status: 'active', isCurrent: true, joinedAt: now, updatedAt: now } })
+    await setCurrent(openid, ledger._id)
+    return { ok: true, joined: true, ledgerId: ledger._id, name: ledger.name, role: mine.data[0].role }
+  }
+
   await G.db.collection('members').add({
     data: {
       _id: G.genId(),
@@ -127,7 +142,7 @@ async function listMembers(e) {
 async function removeMember(e) {
   const openid = G.getOpenid()
   const { ledgerId, memberKey } = e
-  if (!memberKey) throw G.err('PARAM', 'memberKey required')
+  G.assertDocId(memberKey, 'memberKey')
 
   await G.assertOwner(ledgerId, openid)
 
@@ -140,9 +155,9 @@ async function removeMember(e) {
   if (t.data[0].role === 'owner') throw G.err('FORBIDDEN', 'cannot remove owner')
 
   const r = await G.db.collection('members')
-    .where({ _id: memberKey, ledgerId: ledgerId }) // 复合条件，杜绝跨账本越权
+    .where({ _id: memberKey, ledgerId: ledgerId, status: 'active' }) // 复合条件，杜绝跨账本越权
     .update({ data: { status: 'removed', isCurrent: false, updatedAt: new Date() } })
-  if (!r.stats || !r.stats.updated) throw G.err('INTERNAL', 'update failed')
+  if (!r.stats || r.stats.updated !== 1) throw G.err('INTERNAL', 'update failed')
   return { ok: true }
 }
 
