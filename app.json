@@ -5,7 +5,8 @@
     "pages/stats/stats",
     "pages/category/category",
     "pages/member/member",
-    "pages/ledger/ledger"
+    "pages/ledger/ledger",
+    "pages/settings/settings"
   ],
   "window": {
     "backgroundTextStyle": "light",

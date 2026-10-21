@@ -14,6 +14,7 @@
     </view>
     <text class="lbar__name">{{ledgerName || '家庭账本'}}</text>
     <view class="lbar__btn" bindtap="onGoLedgers">切换账本</view>
+    <view class="lbar__btn lbar__btn--sec" bindtap="onGoSettings">设置</view>
   </view>
 
   <!-- 月份切换 -->
@@ -42,6 +43,18 @@
       <text class="sum__k">结余</text>
       <text class="sum__v">{{currency}}{{sumBalanceText}}</text>
     </view>
+  </view>
+
+  <!-- 当月预算进度 -->
+  <view wx:if="{{hasBudget}}" class="budget">
+    <view class="budget__row">
+      <text class="budget__k">当月预算 {{currency}}{{budgetText}}</text>
+      <text class="budget__pct {{isOver?'is-over':''}}">已用 {{usedPct}}%</text>
+    </view>
+    <view class="budget__bar">
+      <view class="budget__fill {{isOver?'is-over':''}}" style="width:{{barPct}}%"></view>
+    </view>
+    <text class="budget__tip {{isOver?'is-over':''}}">已用 {{currency}}{{usedText}} · {{budgetTip}}</text>
   </view>
 
   <!-- 账单列表 -->

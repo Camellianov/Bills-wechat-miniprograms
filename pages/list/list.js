@@ -24,6 +24,15 @@ Page({
     done: false,
     empty: false,
 
+    // 月度预算进度
+    hasBudget: false,
+    budgetText: '',
+    usedText: '',
+    usedPct: 0,
+    barPct: 0,
+    isOver: false,
+    budgetTip: '',
+
     // 编辑弹层
     editing: null,
     editCats: []
@@ -51,8 +60,10 @@ Page({
   onShow() {
     this._active = true
     const lg = store.getLedger() || {}
+    this._budgetFen = lg.monthlyBudgetFen || 0 // 预算随账本上下文刷新
     this.setData({
       masked: !!getApp().globalData.masked,
+      currency: lg.currency || '¥', // 货币符号在设置页可能已改，进页面就同步
       ledgerName: lg.name || '',
       ledgerIconColor: lg.iconColor || '#f7c948'
     })
@@ -76,6 +87,10 @@ Page({
 
   onGoLedgers() {
     wx.navigateTo({ url: '/pages/ledger/ledger' })
+  },
+
+  onGoSettings() {
+    wx.navigateTo({ url: '/pages/settings/settings' })
   },
 
   async initCtx() {
@@ -135,6 +150,27 @@ Page({
       sumExpenseText: fen.fen2yuan(res.expenseFen || 0),
       sumIncomeText: fen.fen2yuan(res.incomeFen || 0),
       sumBalanceText: fen.fen2yuan(res.balanceFen || 0)
+    })
+    this.computeBudget(res.expenseFen || 0)
+  },
+
+  /** 预算进度：只对支出计，超支标红 */
+  computeBudget(expenseFen) {
+    const budget = this._budgetFen || 0
+    if (!budget) { this.setData({ hasBudget: false }); return }
+
+    const pct = Math.round((expenseFen / budget) * 100)
+    const left = budget - expenseFen
+    this.setData({
+      hasBudget: true,
+      budgetText: fen.fen2yuan(budget),
+      usedText: fen.fen2yuan(expenseFen),
+      usedPct: pct,
+      barPct: Math.min(pct, 100),
+      isOver: expenseFen > budget,
+      budgetTip: expenseFen > budget
+        ? '已超支 ' + this.data.currency + fen.fen2yuan(expenseFen - budget)
+        : '剩余 ' + this.data.currency + fen.fen2yuan(left)
     })
   },
 

@@ -37,6 +37,33 @@
   color: var(--brand);
   font-size: 24rpx;
 }
+.lbar__btn--sec { margin-left: 12rpx; }
+
+/* 预算进度 */
+.budget {
+  padding: 20rpx 28rpx;
+  background: var(--card);
+  border-bottom: 2rpx solid var(--line);
+}
+.budget__row { display: flex; align-items: center; }
+.budget__k { color: var(--sub); font-size: 24rpx; }
+.budget__pct { margin-left: auto; font-size: 24rpx; color: var(--income); }
+.budget__pct.is-over { color: var(--expense); }
+.budget__bar {
+  margin-top: 12rpx;
+  height: 12rpx;
+  border-radius: 6rpx;
+  background: #eceef2;
+  overflow: hidden;
+}
+.budget__fill {
+  height: 100%;
+  border-radius: 6rpx;
+  background: var(--income);
+}
+.budget__fill.is-over { background: var(--expense); }
+.budget__tip { display: block; margin-top: 10rpx; color: var(--sub); font-size: 22rpx; }
+.budget__tip.is-over { color: var(--expense); }
 
 .mbar {
   position: relative;

@@ -20,6 +20,8 @@ const CODE_HINT = {
   FORBIDDEN: '无该账本权限',
   PARAM: '数据格式有误',
   NOT_FOUND: '记录不存在',
+  NO_DATA: '所选范围内没有账单可导出',
+  TOO_MANY: '数据过多，请缩小日期范围',
   LIMIT: '分类数量已达上限',
   DUP: '同名分类已存在',
   BUILTIN: '内置分类不可修改或删除',

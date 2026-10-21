@@ -1,0 +1,133 @@
+<privacy-mask show="{{masked}}" />
+
+<view class="page">
+  <view wx:if="{{initError}}" class="errbar">
+    <text class="errbar__t">{{initError}}</text>
+    <view class="errbar__btn" bindtap="onRetry">重试</view>
+  </view>
+
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">{{ledgerName}}</text>
+      <text class="sec__n">{{roleText}}</text>
+    </view>
+  </view>
+
+  <!-- 货币符号 -->
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">货币符号</text>
+    </view>
+    <view class="cur">
+      <view wx:for="{{currencies}}" wx:key="v"
+        class="cur__i {{currency===item.v?'is-on':''}}"
+        data-c="{{item.v}}" data-n="{{item.n}}" bindtap="onCurrencyPick">
+        <text class="cur__s">{{item.v}}</text>
+        <text class="cur__n">{{item.n}}</text>
+      </view>
+    </view>
+    <view class="tip">用于所有金额前的符号，不影响已记录的金额。</view>
+  </view>
+
+  <!-- 月度预算 -->
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">月度预算</text>
+      <text wx:if="{{hasBudget}}" class="sec__n">当前 {{currency}}{{budgetText}}</text>
+    </view>
+    <view class="bud">
+      <text class="bud__cur">{{currency}}</text>
+      <input class="bud__input" type="digit" value="{{budgetInput}}" placeholder="输入每月支出上限" bindinput="onBudgetInput" />
+    </view>
+    <view class="btns">
+      <view class="btn btn--ghost" bindtap="onBudgetClear">清除预算</view>
+      <view class="btn btn--go" bindtap="onBudgetSave">保存预算</view>
+    </view>
+    <view class="tip">设置后账单页会显示当月已用比例，超支标红；留空保存即为清除。</view>
+  </view>
+
+  <!-- 导出 -->
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">导出账单</text>
+    </view>
+    <view class="range">
+      <picker mode="date" value="{{expFrom}}" start="2000-01-01" end="{{expTo || todayStr}}" bindchange="onExpFromChange">
+        <view class="range__i">
+          <text class="range__k">起始</text>
+          <text class="range__v">{{expFrom || '不限'}}</text>
+        </view>
+      </picker>
+      <picker mode="date" value="{{expTo}}" start="{{expFrom || '2000-01-01'}}" end="{{todayStr}}" bindchange="onExpToChange">
+        <view class="range__i">
+          <text class="range__k">结束</text>
+          <text class="range__v">{{expTo || '不限'}}</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="quick">
+      <view class="quick__i {{expQuick==='month'?'is-on':''}}" data-q="month" bindtap="onExpQuick">本月</view>
+      <view class="quick__i {{expQuick==='3m'?'is-on':''}}" data-q="3m" bindtap="onExpQuick">近3个月</view>
+      <view class="quick__i {{expQuick==='all'?'is-on':''}}" data-q="all" bindtap="onExpQuick">全部</view>
+    </view>
+
+    <view class="act {{exporting?'is-off':''}}" bindtap="onExportTap">
+      {{exporting ? '生成文件中...' : '导出 ' + expHint}}
+    </view>
+    <view class="tip">导出内容含日期 / 类型 / 分类 / 金额 / 备注，并附合计行，Excel 可直接打开。建议按月份分批导出，单次上限 10000 笔，超出会提示缩小范围。文件保存在你的云存储中，可在云开发控制台的存储里查看管理。</view>
+  </view>
+
+  <!-- 清空数据 -->
+  <view class="sec">
+    <view class="sec__head">
+      <text class="sec__t">清空数据</text>
+    </view>
+    <view class="act act--danger {{isOwner?'':'is-off'}}" bindtap="onClearTap">清空本账本全部账单</view>
+    <view class="tip">仅房主可操作。清空后账单不可恢复，账本与分类会保留。</view>
+  </view>
+</view>
+
+<!-- 导出结果 -->
+<view wx:if="{{expDlg}}" class="emask" bindtap="onExpClose" catchtouchmove="noop">
+  <view class="epanel" catchtap="noop">
+    <view class="epanel__title">导出完成</view>
+    <view class="efile">
+      <text class="efile__n">{{expFileName}}</text>
+      <text class="efile__c">共 {{expCount}} 笔</text>
+    </view>
+    <view class="ebtns">
+      <view class="ebtn ebtn--cancel" bindtap="onExpCopy">复制链接</view>
+      <view class="ebtn ebtn--save" bindtap="onExpSend">发送到微信</view>
+    </view>
+    <view class="etip">点「发送到微信」后在好友列表里选「文件传输助手」，即可在电脑微信里打开；若手机没有该文件，可先复制链接。</view>
+  </view>
+</view>
+
+<!-- 切换货币确认 -->
+<view wx:if="{{curDlg}}" class="emask" bindtap="onCurCancel" catchtouchmove="noop">
+  <view class="epanel" catchtap="noop">
+    <view class="epanel__title">切换货币符号</view>
+    <view class="enote">切换为「{{curPending}} {{curPendingName}}」后，各处金额前面的符号都会变，但已记录金额的数字不会按汇率换算，合计会把不同货币的金额直接相加。</view>
+    <view class="ebtns">
+      <view class="ebtn ebtn--cancel" bindtap="onCurCancel">取消</view>
+      <view class="ebtn ebtn--save" bindtap="onCurConfirm">确定切换</view>
+    </view>
+  </view>
+</view>
+
+<!-- 清空确认：需输入“删除”二字 -->
+<view wx:if="{{clearDlg}}" class="emask" bindtap="onClearClose" catchtouchmove="noop">
+  <view class="epanel" catchtap="noop">
+    <view class="epanel__title">清空全部账单</view>
+    <view class="ewarn">此操作将删除本账本的全部账单且不可恢复，账本与分类会保留。</view>
+    <view class="erow">
+      <text class="erow__k">确认</text>
+      <input class="erow__input" value="{{clearInput}}" placeholder="输入“删除”二字" bindinput="onClearInput" />
+    </view>
+    <view class="ebtns">
+      <view class="ebtn ebtn--cancel" bindtap="onClearClose">取消</view>
+      <view class="ebtn ebtn--danger" bindtap="onClearConfirm">确认清空</view>
+    </view>
+  </view>
+</view>

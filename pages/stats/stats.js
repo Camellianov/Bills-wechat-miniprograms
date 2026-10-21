@@ -38,7 +38,11 @@ Page({
 
   onShow() {
     this._active = true
-    this.setData({ masked: !!getApp().globalData.masked })
+    const lg = store.getLedger() || {}
+    this.setData({
+      masked: !!getApp().globalData.masked,
+      currency: lg.currency || '¥' // 货币符号在设置页可能已改，进页面就同步
+    })
     if (!store.getLedgerId()) { this.initCtx(); return }
     if (this._dirty) this.load()
   },

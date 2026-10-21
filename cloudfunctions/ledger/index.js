@@ -14,6 +14,8 @@ exports.main = async (event) => {
       case 'createLedger': return await createLedger(e)
       case 'switchLedger': return await switchLedger(e)
       case 'deleteLedger': return await deleteLedger(e)
+      case 'updateSettings': return await updateSettings(e)
+      case 'clearBills': return await clearBills(e)
       default: return { ok: false, code: 'BAD_ACTION' }
     }
   } catch (err) {
@@ -42,6 +44,14 @@ const ALLOWED_EMOJI = [
 ]
 const MAX_CATEGORIES = 30
 const MAX_LEDGERS = 10
+
+/**
+ * 货币符号白名单（服务端强校验，客户端传其它符号一律拒绝）
+ * = 人民币 / 美元 / 欧元 / 英镑 / 韩元 / 卢布
+ * 必须与 miniprogram/utils/currency.js 的 CURRENCIES、cloudfunctions/export 的 CURRENCIES 保持一致
+ */
+const CURRENCIES = ['\uFFE5', '$', '\u20AC', '\u00A3', '\u20A9', '\u20BD']
+const DEFAULT_CURRENCY = '\uFFE5'
 
 /**
  * 账本图标颜色白名单（服务端强校验，客户端传其它颜色一律回退默认）
@@ -369,13 +379,64 @@ async function deleteLedger(e) {
   return { ok: true, ...(await buildContext(openid, await myMembers(openid))) }
 }
 
-/** 分批删除账单：单次上限 100 条，循环至清空 */
+/** 分批删除账单：单次上限 100 条，循环至清空，返回实际删除条数 */
 async function removeBillsOfLedger(ledgerId) {
+  let removed = 0
   for (let i = 0; i < 200; i++) {
     const r = await G.db.collection('bills').where({ ledgerId }).limit(100).remove()
     const n = (r && r.stats && r.stats.removed) || 0
+    removed += n
     if (n < 100) break
   }
+  return removed
+}
+
+/**
+ * 账本设置：货币符号 + 月度预算
+ * 二者都是账本共享属性，本账本成员均可修改；传什么改什么，未传的字段不动
+ */
+async function updateSettings(e) {
+  const openid = G.getOpenid()
+  const { ledgerId } = e
+  await G.assertMember(ledgerId, openid)
+
+  const data = { updatedAt: new Date() }
+  let touched = false
+
+  if (Object.prototype.hasOwnProperty.call(e, 'currency')) {
+    const c = String(e.currency || '')
+    if (CURRENCIES.indexOf(c) < 0) throw G.err('PARAM', 'bad currency')
+    data.currency = c
+    touched = true
+  }
+
+  if (Object.prototype.hasOwnProperty.call(e, 'monthlyBudgetFen')) {
+    const v = e.monthlyBudgetFen
+    if (v === null || v === '' || v === undefined) {
+      data.monthlyBudgetFen = null // 传 null 视为清除预算
+    } else {
+      const n = Number(v)
+      if (!Number.isInteger(n) || n <= 0 || n > 999999999) throw G.err('PARAM', 'bad budget')
+      data.monthlyBudgetFen = n
+    }
+    touched = true
+  }
+
+  if (!touched) throw G.err('PARAM', 'nothing to update')
+
+  const r = await G.db.collection('ledgers').where({ _id: ledgerId }).update({ data: data })
+  if (!r.stats || !r.stats.updated) throw G.err('INTERNAL', 'update failed')
+  return { ok: true, ...(await buildContext(openid, await myMembers(openid))) }
+}
+
+/** 清空本账本全部账单：仅 owner，账本本身与分类保留 */
+async function clearBills(e) {
+  const openid = G.getOpenid()
+  const { ledgerId } = e
+  await G.assertOwner(ledgerId, openid) // 仅房主
+
+  const cleared = await removeBillsOfLedger(ledgerId)
+  return { ok: true, cleared: cleared }
 }
 
 /** 统一上下文：当前账本 + 分类 + 角色 + 账本列表（不返回任何他人 openid） */
