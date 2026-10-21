@@ -6,187 +6,178 @@
 .errbar {
   display: flex;
   align-items: center;
-  padding: 16rpx 28rpx;
-  background: #fff2f0;
-  border-bottom: 2rpx solid #ffd6cf;
+  padding: 24rpx 32rpx;
+  background: var(--line2);
 }
-.errbar__t { flex: 1; color: #c0341b; font-size: 24rpx; }
+.errbar__t { flex: 1; color: var(--text2); font-size: 24rpx; }
 .errbar__btn {
   padding: 8rpx 24rpx;
   border-radius: 24rpx;
-  background: var(--expense);
+  background: var(--brand);
   color: #fff;
   font-size: 24rpx;
 }
 
 .sec {
-  margin: 24rpx 28rpx 0;
+  margin: 24rpx 32rpx;
+  padding: 28rpx 24rpx;
   background: var(--card);
-  border-radius: 16rpx;
-  overflow: hidden;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
-.sec__head {
+.sec__head { display: flex; align-items: center; padding-bottom: 20rpx; }
+.sec__t { font-size: 30rpx; font-weight: 600; }
+.sec__n { margin-left: auto; color: var(--sub); font-size: 24rpx; }
+
+/* 辅助说明收进「!」符号 */
+.ihelp {
+  width: 36rpx;
+  height: 36rpx;
+  margin-left: auto;
   display: flex;
   align-items: center;
-  padding: 20rpx 24rpx;
-  border-bottom: 2rpx solid var(--line);
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--line2);
+  color: var(--sub);
+  font-size: 22rpx;
 }
-.sec__t { font-size: 28rpx; font-weight: 600; }
-.sec__n { margin-left: auto; color: var(--sub); font-size: 22rpx; }
+.sec__n + .ihelp { margin-left: 16rpx; }
 
-/* 货币符号 */
-.cur {
-  display: flex;
-  flex-wrap: wrap;
-  padding: 12rpx 16rpx;
-}
+/* 货币符号：三列栅格 */
+.cur { display: flex; flex-wrap: wrap; }
 .cur__i {
   width: 33.3333%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx 0;
-  border-radius: 12rpx;
-  border: 2rpx solid transparent;
+  padding: 20rpx 0;
+  border-radius: var(--r-m);
+  border: 1rpx solid transparent;
 }
-.cur__i.is-on {
-  background: rgba(43, 108, 255, 0.1);
-  border-color: var(--brand);
-}
+.cur__i.is-on { background: var(--brand-weak); border-color: var(--brand-line); }
 .cur__s { font-size: 40rpx; font-weight: 600; }
-.cur__n { margin-top: 6rpx; color: var(--sub); font-size: 22rpx; }
-.cur__i.is-on .cur__n { color: var(--brand); }
+.cur__n { margin-top: 8rpx; color: var(--sub); font-size: 22rpx; }
+.cur__i.is-on .cur__s,
+.cur__i.is-on .cur__n { color: var(--brand-text); }
 
 /* 月度预算 */
 .bud {
   display: flex;
   align-items: center;
-  height: 96rpx;
-  padding: 0 24rpx;
-  border-bottom: 2rpx solid var(--line);
+  height: 88rpx;
+  border-bottom: 1rpx solid var(--line);
 }
 .bud__cur { font-size: 32rpx; color: var(--sub); }
 .bud__input { flex: 1; margin-left: 16rpx; font-size: 36rpx; font-weight: 600; }
 
-.btns { display: flex; gap: 16rpx; padding: 20rpx 24rpx; }
+.btns { display: flex; gap: 16rpx; margin-top: 24rpx; }
 .btn {
   flex: 1;
-  height: 80rpx;
-  line-height: 80rpx;
+  height: 88rpx;
+  line-height: 88rpx;
   text-align: center;
-  border-radius: 12rpx;
+  border-radius: var(--r-m);
   font-size: 28rpx;
 }
-.btn--ghost { background: #f6f7f9; color: var(--sub); }
+.btn--ghost { background: var(--line2); color: var(--text2); }
 .btn--go { background: var(--brand); color: #fff; }
 
 /* 导出日期范围 */
-.range {
-  display: flex;
-  gap: 16rpx;
-  padding: 20rpx 24rpx 0;
-}
+.range { display: flex; gap: 16rpx; }
 .range__i {
   flex: 1;
   display: flex;
   align-items: center;
-  height: 80rpx;
-  padding: 0 20rpx;
-  border-radius: 12rpx;
-  background: #f6f7f9;
+  height: 88rpx;
+  padding: 0 24rpx;
+  border-radius: var(--r-m);
+  background: var(--line2);
 }
 .range__k { color: var(--sub); font-size: 24rpx; }
-.range__v { margin-left: auto; font-size: 28rpx; }
+.range__v { margin-left: auto; font-size: 26rpx; }
 
-.quick {
-  display: flex;
-  gap: 12rpx;
-  padding: 16rpx 24rpx 0;
-}
+.quick { display: flex; gap: 12rpx; margin-top: 16rpx; }
 .quick__i {
   flex: 1;
   height: 64rpx;
   line-height: 64rpx;
   text-align: center;
   border-radius: 32rpx;
-  background: #f6f7f9;
-  color: var(--sub);
+  background: var(--line2);
+  color: var(--text2);
   font-size: 24rpx;
 }
-.quick__i.is-on { background: rgba(43, 108, 255, 0.12); color: var(--brand); }
+.quick__i.is-on { background: var(--brand-weak); color: var(--brand-text); }
 
-.enote {
-  padding: 16rpx;
-  border-radius: 12rpx;
-  background: #f6f7f9;
-  color: var(--sub);
-  font-size: 24rpx;
-  line-height: 1.6;
-}
-
-/* 操作按钮 */
+/* 操作 */
 .act {
-  margin: 20rpx 24rpx;
-  height: 88rpx;
-  line-height: 88rpx;
+  height: 96rpx;
+  line-height: 96rpx;
   text-align: center;
-  border-radius: 12rpx;
+  margin-top: 16rpx;
+  border-radius: var(--r-m);
   background: var(--brand);
   color: #fff;
   font-size: 30rpx;
+  font-weight: 600;
 }
+/* 清空：灰底弱化，不做红色警示 */
 .act--danger {
-  background: #fff2f0;
-  color: var(--expense);
+  background: var(--line);
+  color: var(--text2);
 }
 .act.is-off { opacity: 0.5; }
-
-.tip { padding: 12rpx 24rpx 20rpx; color: var(--sub); font-size: 22rpx; }
 
 /* 弹层 */
 .emask {
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
   z-index: 900;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(22, 24, 28, 0.3);
   display: flex;
   align-items: flex-end;
 }
 .epanel {
   width: 100%;
   background: var(--card);
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 24rpx 28rpx 40rpx;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 32rpx 32rpx 48rpx;
 }
 .epanel__title {
   text-align: center;
-  font-size: 30rpx;
-  font-weight: 600;
-  padding-bottom: 16rpx;
+  font-size: 26rpx;
+  color: var(--sub);
+  padding-bottom: 24rpx;
 }
-.efile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12rpx 0 8rpx;
-}
+
+.efile { display: flex; flex-direction: column; align-items: center; padding: 12rpx 0 8rpx; }
 .efile__n { font-size: 28rpx; }
 .efile__c { margin-top: 8rpx; color: var(--sub); font-size: 22rpx; }
 
-.ewarn {
-  padding: 12rpx 16rpx;
-  margin-bottom: 16rpx;
-  border-radius: 12rpx;
-  background: #fff2f0;
-  color: #c0341b;
+/* 说明块：中性底，不用高饱和警示色 */
+.enote {
+  padding: 20rpx;
+  border-radius: var(--r-m);
+  background: var(--line2);
+  color: var(--text2);
   font-size: 24rpx;
+}
+/* 清空警告：靠字重加重，不用红色 */
+.ewarn {
+  padding: 20rpx;
+  border-radius: var(--r-m);
+  background: var(--line2);
+  color: var(--text);
+  font-size: 24rpx;
+  font-weight: 600;
 }
 
 .erow {
   display: flex;
   align-items: center;
-  height: 88rpx;
-  border-bottom: 2rpx solid var(--line);
+  height: 96rpx;
+  border-bottom: 1rpx solid var(--line);
 }
 .erow__k { width: 96rpx; color: var(--sub); font-size: 26rpx; }
 .erow__input { flex: 1; text-align: right; font-size: 28rpx; }
@@ -196,13 +187,14 @@
 .ebtns { display: flex; gap: 16rpx; margin-top: 28rpx; }
 .ebtn {
   flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
+  height: 96rpx;
+  line-height: 96rpx;
   text-align: center;
-  border-radius: 16rpx;
+  border-radius: var(--r-m);
   font-size: 30rpx;
   font-weight: 600;
 }
-.ebtn--cancel { background: #f6f7f9; color: var(--sub); }
+.ebtn--cancel { background: var(--line2); color: var(--text2); }
 .ebtn--save { background: var(--brand); color: #fff; }
+/* 确认清空：墨色实底，视觉最重，而非红色 */
 .ebtn--danger { background: var(--expense); color: #fff; }

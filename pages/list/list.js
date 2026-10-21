@@ -3,6 +3,7 @@ const store = require('../../utils/store.js')
 const bus = require('../../utils/bus.js')
 const fen = require('../../utils/fen.js')
 const sh = require('../../utils/shanghai.js')
+const colors = require('../../utils/colors.js')
 
 const PAGE_SIZE = 20
 
@@ -15,7 +16,7 @@ Page({
     monthIdx: 0,                 // 0 = 本月，-1 = 上月，不允许大于 0
     monthLabel: '',
     ledgerName: '',
-    ledgerIconColor: '#f7c948',
+    ledgerIconColor: colors.DEFAULT_COLOR,
     sumExpenseText: '0.00',
     sumIncomeText: '0.00',
     sumBalanceText: '0.00',
@@ -65,7 +66,7 @@ Page({
       masked: !!getApp().globalData.masked,
       currency: lg.currency || '¥', // 货币符号在设置页可能已改，进页面就同步
       ledgerName: lg.name || '',
-      ledgerIconColor: lg.iconColor || '#f7c948'
+      ledgerIconColor: lg.iconColor || colors.DEFAULT_COLOR
     })
     if (!store.getLedgerId()) { this.initCtx(); return }
     if (this._dirty) this.reload()
@@ -347,7 +348,7 @@ Page({
     wx.showModal({
       title: '删除这笔',
       content: '删除后不可恢复，确认删除？',
-      confirmColor: '#ff5b4a',
+      confirmColor: '#6b93d6',
       success: r => {
         if (!r.confirm) return
         wx.showLoading({ title: '删除中', mask: true })

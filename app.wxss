@@ -1,15 +1,39 @@
+/**
+ * 设计基底
+ * 配色：黑白灰 + 浅中性为底，单一低明度蓝作点缀
+ * 造型：柔和浅圆角 + 纤细 1rpx 描边 + 极淡投影
+ * 排版：仅靠字号 / 字重区分主次，行距 1.6 宽松
+ */
 page {
-  --bg: #f6f7f9;
+  /* 基底 */
+  --bg: #f4f6f9;
   --card: #ffffff;
-  --text: #1a1a1a;
-  --sub: #8a8f99;
-  --line: #eceef2;
-  --expense: #ff5b4a;
-  --income: #17b26a;
-  --brand: #2b6cff;
+  --text: #16181c;
+  --text2: #5a6270;
+  --sub: #9aa4b2;
+  --line: #e9edf3;
+  --line2: #f2f4f8;
+
+  /* 点缀：单一低明度蓝 */
+  --brand: #6b93d6;        /* 主色，承载白字 */
+  --brand-text: #4a76bf;   /* 文字态，比底色深保证可读 */
+  --brand-weak: #e8f0fc;   /* 极浅底 */
+  --brand-line: #c7dbf7;   /* 描边 */
+
+  /* 语义色：支出取中性墨，收入取点缀蓝，统一蓝灰体系 */
+  --expense: #3a4250;
+  --income: #6b93d6;
+
+  /* 造型 */
+  --r-l: 20rpx;
+  --r-m: 12rpx;
+  --r-s: 8rpx;
+  --shadow: 0 2rpx 8rpx rgba(22, 24, 28, 0.04);
+
   background: var(--bg);
   color: var(--text);
   font-size: 28rpx;
+  line-height: 1.6;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
 }
 
@@ -17,24 +41,24 @@ view, text, input, scroll-view {
   box-sizing: border-box;
 }
 
-/* 纯 CSS 三角箭头：不依赖任何字符，避免实体转义/特殊字符问题 */
+/* 纯 CSS 三角箭头：不依赖字符，避免转义问题 */
 .tri {
   width: 0;
   height: 0;
-  border-top: 10rpx solid transparent;
-  border-bottom: 10rpx solid transparent;
+  border-top: 8rpx solid transparent;
+  border-bottom: 8rpx solid transparent;
 }
-.tri--left { border-right: 14rpx solid #8a8f99; }
-.tri--right { border-left: 14rpx solid #8a8f99; }
+.tri--left { border-right: 12rpx solid var(--text2); }
+.tri--right { border-left: 12rpx solid var(--text2); }
 
 /* 账本图标：形状固定（竖版账本 + 左侧书脊），颜色由 inline style 决定 */
 .lgico {
   position: relative;
   flex: none;
-  width: 44rpx;
-  height: 56rpx;
-  border-radius: 8rpx;
-  border: 2rpx solid rgba(0, 0, 0, 0.12);
+  width: 40rpx;
+  height: 52rpx;
+  border-radius: 10rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -43,17 +67,17 @@ view, text, input, scroll-view {
   left: 8rpx;
   top: 10rpx;
   bottom: 10rpx;
-  width: 4rpx;
+  width: 3rpx;
   border-radius: 2rpx;
-  background: rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.16);
 }
 
 .row-line {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 96rpx;
-  padding: 0 28rpx;
+  height: 112rpx;
+  padding: 0 32rpx;
   background: var(--card);
-  border-bottom: 2rpx solid var(--line);
+  border-bottom: 1rpx solid var(--line);
 }

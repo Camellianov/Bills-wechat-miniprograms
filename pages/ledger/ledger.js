@@ -110,7 +110,7 @@ Page({
     wx.showModal({
       title: '删除账本',
       content: '删除后该账本的全部账单将一并删除且不可恢复，其他成员也会失去访问，确认删除（' + name + '）？',
-      confirmColor: '#ff5b4a',
+      confirmColor: '#6b93d6',
       success: r => {
         if (!r.confirm) return
         wx.showLoading({ title: '删除中', mask: true })
@@ -129,6 +129,18 @@ Page({
   /** 云函数返回的都是统一上下文，直接覆盖本地缓存 */
   applyCtx(res) {
     store.setCtx({ ledgerId: res.ledgerId, role: res.role, ledger: res.ledger })
+  },
+
+  /** 辅助说明收进「!」符号，点击才展开，界面不堆小字 */
+  onTipTap(e) {
+    const t = e.currentTarget.dataset.t
+    if (!t) return
+    wx.showModal({
+      content: t,
+      showCancel: false,
+      confirmText: '知道了',
+      confirmColor: '#6b93d6'
+    })
   },
 
   noop() {}

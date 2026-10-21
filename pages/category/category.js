@@ -119,7 +119,7 @@ Page({
     wx.showModal({
       title: '删除分类',
       content: '删除后不可恢复，确认删除（' + cat.name + '）？',
-      confirmColor: '#ff5b4a',
+      confirmColor: '#6b93d6',
       success: r => {
         if (!r.confirm) return
         wx.showLoading({ title: '删除中', mask: true })
@@ -158,6 +158,18 @@ Page({
       this.group(res.categories)
       this.setData({ dlg: false, dlgName: '' })
       wx.showToast({ title: isEdit ? '已修改' : '已添加', icon: 'success' })
+    })
+  },
+
+  /** 辅助说明收进「!」符号，点击才展开，界面不堆小字 */
+  onTipTap(e) {
+    const t = e.currentTarget.dataset.t
+    if (!t) return
+    wx.showModal({
+      content: t,
+      showCancel: false,
+      confirmText: '知道了',
+      confirmColor: '#6b93d6'
     })
   },
 

@@ -26,6 +26,7 @@
   <view wx:if="{{isOwner}}" class="sec">
     <view class="sec__head">
       <text class="sec__t">邀请家人</text>
+      <view class="ihelp" data-t="邀请码 7 天内有效。未认证小程序若无法分享，点「复制」把邀请码通过微信聊天发给家人，让对方在下方「用邀请码加入」里输入即可。" bindtap="onTipTap">!</view>
     </view>
     <view class="inv">
       <text class="inv__code">{{inviteCode || '------'}}</text>
@@ -35,7 +36,6 @@
       </view>
     </view>
     <button class="share" open-type="share">分享给家人</button>
-    <view class="tip tip--pad">邀请码 7 天内有效。未认证小程序若无法分享，点「复制」把邀请码通过微信聊天发给家人，让对方在下方「用邀请码加入」里输入即可。</view>
   </view>
 
   <view wx:else class="tip tip--pad">仅房主可邀请成员、查看与刷新邀请码。</view>
@@ -43,15 +43,14 @@
   <view class="sec">
     <view class="sec__head">
       <text class="sec__t">用邀请码加入</text>
+      <view class="ihelp" data-t="加入后会自动切换到该账本；人数上限 {{max}} 人。" bindtap="onTipTap">!</view>
     </view>
     <view class="join">
       <input class="join__input" value="{{joinCode}}" placeholder="6 位邀请码" maxlength="6" bindinput="onJoinInput" />
       <view class="join__btn" bindtap="onJoinPaste">粘贴</view>
       <view class="join__btn join__btn--go" bindtap="onJoinSubmit">加入</view>
     </view>
-    <view class="tip tip--pad">加入后会自动切换到该账本；人数上限 {{max}} 人。</view>
   </view>
 
   <view wx:if="{{!isOwner}}" class="leave" bindtap="onLeave">退出该账本</view>
-  <view wx:else class="tip tip--pad">你是房主，不可退出本账本。</view>
 </view>

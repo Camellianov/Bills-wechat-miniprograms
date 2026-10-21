@@ -12,6 +12,7 @@
       <view class="sec__ops">
         <view class="sec__restore" data-type="expense" bindtap="onRestore">恢复默认</view>
         <view class="sec__add" data-type="expense" bindtap="onAdd">+ 新增</view>
+        <view class="ihelp" data-t="内置分类也可改名、换图标、删除；已记过账的分类不能删除。" bindtap="onTipTap">!</view>
       </view>
     </view>
     <view wx:for="{{expenseCats}}" wx:key="id" class="row">
@@ -42,7 +43,6 @@
     <view wx:if="{{!incomeCats.length}}" class="empty">暂无收入分类</view>
   </view>
 
-  <view class="tip">提示：内置分类也可改名、换图标、删除；已记过账的分类不能删除。</view>
   <view class="pad"></view>
 </scroll-view>
 

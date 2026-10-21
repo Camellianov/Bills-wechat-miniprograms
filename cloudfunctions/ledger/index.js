@@ -58,19 +58,19 @@ const DEFAULT_CURRENCY = '\uFFE5'
  * 顺序与 miniprogram/utils/colors.js 的 LEDGER_COLORS 保持一致
  */
 const LEDGER_COLORS = [
-  '#e54d4d', // 红
-  '#34c759', // 绿
-  '#2b6cff', // 蓝
-  '#8e5cf6', // 紫
-  '#ff7eb6', // 粉
-  '#8b5e34', // 褐
-  '#1a1a1a', // 黑
+  '#c98a8a', // 红
+  '#8fb394', // 绿
+  '#9db9d9', // 蓝
+  '#a89bc4', // 紫
+  '#d4a8bd', // 粉
+  '#a89078', // 褐
+  '#4a4a4a', // 黑
   '#ffffff', // 白
-  '#f7c948', // 黄（默认）
-  '#ff9500', // 橙
-  '#8a8f99'  // 灰
+  '#d9c48a', // 黄（默认）
+  '#d4a373', // 橙
+  '#a8adb5'  // 灰
 ]
-const DEFAULT_COLOR = '#f7c948'
+const DEFAULT_COLOR = '#d9c48a'
 
 // ---- 分类管理 ----
 

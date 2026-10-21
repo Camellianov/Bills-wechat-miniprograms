@@ -3,9 +3,10 @@ const store = require('../../utils/store.js')
 const bus = require('../../utils/bus.js')
 const fen = require('../../utils/fen.js')
 const sh = require('../../utils/shanghai.js')
+const colors = require('../../utils/colors.js')
 
-// 环形图配色（固定调色板，不依赖图片资源）
-const PALETTE = ['#2b6cff', '#17b26a', '#ff9500', '#8e5cf6', '#ff5b4a', '#ff7eb6', '#34c759', '#8a8f99', '#e54d4d', '#00b5ad']
+// 环形图配色：与账本图标共用同一套莫兰迪色，色相各异，分类区分更明显
+const PALETTE = colors.CHART_COLORS
 
 // 柱子高度用绝对 rpx：百分比高度依赖父级有确定高度，在 flex 容器里会失效
 const MAX_BAR_H = 160
@@ -207,7 +208,7 @@ Page({
         ctx.beginPath()
         ctx.arc(cx, cy, R, 0, Math.PI * 2)
         ctx.arc(cx, cy, r, 0, Math.PI * 2, true)
-        ctx.fillStyle = '#eceef2'
+        ctx.fillStyle = '#f2f4f8'
         ctx.fill()
         return
       }

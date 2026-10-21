@@ -134,7 +134,7 @@ Page({
     wx.showModal({
       title: '移除成员',
       content: '移除后对方将无法查看本账本，确认移除（' + name + '）？',
-      confirmColor: '#ff5b4a',
+      confirmColor: '#6b93d6',
       success: r => {
         if (!r.confirm) return
         wx.showLoading({ title: '处理中', mask: true })
@@ -152,7 +152,7 @@ Page({
     wx.showModal({
       title: '退出账本',
       content: '退出后将无法查看该账本的账单，确认退出？',
-      confirmColor: '#ff5b4a',
+      confirmColor: '#6b93d6',
       success: r => {
         if (!r.confirm) return
         wx.showLoading({ title: '处理中', mask: true })
@@ -177,6 +177,18 @@ Page({
       title: '邀请你一起记账',
       path: '/pages/record/record?invite=' + (this.data.inviteCode || '')
     }
+  },
+
+  /** 辅助说明收进「!」符号，点击才展开，界面不堆小字 */
+  onTipTap(e) {
+    const t = e.currentTarget.dataset.t
+    if (!t) return
+    wx.showModal({
+      content: t,
+      showCancel: false,
+      confirmText: '知道了',
+      confirmColor: '#6b93d6'
+    })
   },
 
   noop() {}

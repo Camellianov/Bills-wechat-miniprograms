@@ -6,78 +6,77 @@
 .errbar {
   display: flex;
   align-items: center;
-  padding: 16rpx 28rpx;
-  background: #fff2f0;
-  border-bottom: 2rpx solid #ffd6cf;
+  padding: 24rpx 32rpx;
+  background: var(--line2);
 }
-.errbar__t { flex: 1; color: #c0341b; font-size: 24rpx; }
+.errbar__t { flex: 1; color: var(--text2); font-size: 24rpx; }
 .errbar__btn {
   padding: 8rpx 24rpx;
   border-radius: 24rpx;
-  background: var(--expense);
+  background: var(--brand);
   color: #fff;
   font-size: 24rpx;
 }
 
+/* 月份栏 */
 .mbar {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20rpx 28rpx;
+  padding: 32rpx;
   background: var(--card);
-  border-bottom: 2rpx solid var(--line);
 }
 .mbar__arrow {
-  width: 72rpx;
-  height: 56rpx;
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12rpx;
-  background: #f6f7f9;
+  border-radius: 32rpx;
+  background: var(--line2);
 }
-.mbar__arrow.is-off { opacity: 0.35; }
+.mbar__arrow.is-off { opacity: 0.3; }
 .mbar__label {
-  min-width: 200rpx;
+  min-width: 220rpx;
   text-align: center;
-  font-size: 30rpx;
+  font-size: 32rpx;
   font-weight: 600;
+  letter-spacing: 1rpx;
 }
 
-.seg {
-  display: flex;
-  gap: 16rpx;
-  padding: 20rpx 28rpx;
-}
+/* 收支切换 */
+.seg { display: flex; gap: 12rpx; padding: 24rpx 32rpx 0; }
 .seg__i {
   flex: 1;
-  height: 68rpx;
-  line-height: 68rpx;
+  height: 64rpx;
+  line-height: 64rpx;
   text-align: center;
-  border-radius: 34rpx;
+  border-radius: 32rpx;
   background: var(--card);
   color: var(--sub);
-  font-size: 28rpx;
+  font-size: 26rpx;
 }
 .seg__i.is-on { background: var(--brand); color: #fff; }
 
 .card {
-  margin: 0 28rpx 24rpx;
-  padding: 24rpx;
+  margin: 24rpx 32rpx;
+  padding: 32rpx 28rpx;
   background: var(--card);
-  border-radius: 16rpx;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
-.card__t { font-size: 28rpx; font-weight: 600; margin-bottom: 20rpx; }
+.card__t { font-size: 26rpx; color: var(--sub); margin-bottom: 24rpx; }
 .card__n { color: var(--sub); font-size: 24rpx; font-weight: 400; }
 
+/* 环形图 */
 .piebox {
   position: relative;
-  width: 320rpx;
-  height: 320rpx;
+  width: 300rpx;
+  height: 300rpx;
   margin: 0 auto;
 }
-.pie { width: 320rpx; height: 320rpx; }
+.pie { width: 300rpx; height: 300rpx; }
 .piecenter {
   position: absolute;
   left: 0; top: 0; right: 0; bottom: 0;
@@ -88,21 +87,23 @@
   pointer-events: none;
 }
 .piecenter__k { color: var(--sub); font-size: 22rpx; }
-.piecenter__v { margin-top: 6rpx; font-size: 34rpx; font-weight: 600; }
+.piecenter__v { margin-top: 8rpx; font-size: 40rpx; font-weight: 600; }
 
-.lg {
-  display: flex;
-  align-items: center;
-  height: 72rpx;
-  border-bottom: 2rpx solid var(--line);
-}
-.lg:last-child { border-bottom: 0; }
+/* 图例：不画分割线，靠留白区隔 */
+.lg { display: flex; align-items: center; padding: 12rpx 0; }
 .lg__dot { width: 16rpx; height: 16rpx; border-radius: 8rpx; }
-.lg__em { margin-left: 16rpx; font-size: 32rpx; }
+.lg__em { margin-left: 16rpx; font-size: 30rpx; }
 .lg__name { margin-left: 12rpx; font-size: 26rpx; flex: 1; }
 .lg__pct { color: var(--sub); font-size: 24rpx; }
-.lg__amt { margin-left: 20rpx; font-size: 26rpx; font-weight: 600; min-width: 120rpx; text-align: right; }
+.lg__amt {
+  margin-left: 20rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  min-width: 120rpx;
+  text-align: right;
+}
 
+/* 近半年趋势 */
 .trend {
   display: flex;
   align-items: flex-end;
@@ -118,7 +119,6 @@
   font-size: 20rpx;
 }
 .bar__wrap {
-  /* 显式高度：柱子高度是绝对 rpx，容器必须有确定高度才能对齐底部 */
   height: 160rpx;
   width: 100%;
   display: flex;
@@ -126,24 +126,24 @@
   justify-content: center;
   gap: 8rpx;
 }
-/* 每个视图只画一根柱子，加宽一些更好读 */
+/* 单柱视图：柱子加宽，圆角柔和 */
 .bar__exp {
   width: 28rpx;
-  border-radius: 6rpx 6rpx 0 0;
+  border-radius: 8rpx 8rpx 0 0;
   background: var(--expense);
 }
 .bar__inc {
   width: 28rpx;
-  border-radius: 6rpx 6rpx 0 0;
+  border-radius: 8rpx 8rpx 0 0;
   background: var(--income);
 }
-.bar__lab { margin-top: 8rpx; color: var(--sub); font-size: 20rpx; }
+.bar__lab { margin-top: 12rpx; color: var(--sub); font-size: 20rpx; }
 
-.tiplegend { display: flex; gap: 24rpx; margin-top: 16rpx; }
-.tiplegend__i { display: flex; align-items: center; color: var(--sub); font-size: 22rpx; }
+.tiplegend { display: flex; gap: 24rpx; margin-top: 24rpx; }
+.tiplegend__i { display: flex; align-items: center; color: var(--text2); font-size: 22rpx; }
 .tiplegend__d { width: 20rpx; height: 20rpx; border-radius: 6rpx; margin-right: 8rpx; }
 .tiplegend__d.is-exp { background: var(--expense); }
 .tiplegend__d.is-inc { background: var(--income); }
 
-.empty { padding: 60rpx 0; text-align: center; color: #c2c8d2; font-size: 26rpx; }
+.empty { padding: 80rpx 0; text-align: center; color: var(--sub); font-size: 26rpx; }
 .pad { height: 40rpx; }

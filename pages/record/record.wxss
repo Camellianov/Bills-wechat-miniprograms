@@ -1,55 +1,53 @@
+/* 录入页：功能密集，留白按可用空间适度加，保证键盘始终完整可见 */
 .page {
   height: 100vh;
   display: flex;
   flex-direction: column;
   background: var(--bg);
-  padding: 0 20rpx 20rpx;
+  padding: 0 24rpx 24rpx;
 }
 
 .errbar {
   display: flex;
   align-items: center;
-  padding: 16rpx 8rpx;
+  padding: 20rpx 24rpx;
   margin-bottom: 12rpx;
-  background: #fff2f0;
-  border-radius: 12rpx;
+  background: var(--line2);
+  border-radius: var(--r-m);
 }
-.errbar__t { flex: 1; color: #c0341b; font-size: 24rpx; }
+.errbar__t { flex: 1; color: var(--text2); font-size: 24rpx; }
 .errbar__btn {
   padding: 8rpx 24rpx;
   border-radius: 24rpx;
-  background: var(--expense);
+  background: var(--brand);
   color: #fff;
   font-size: 24rpx;
 }
 
-.topbar {
-  display: flex;
-  align-items: center;
-  padding: 16rpx 8rpx 8rpx;
-}
+.topbar { display: flex; align-items: center; padding: 24rpx 8rpx 12rpx; }
 .seg { display: flex; gap: 12rpx; }
 .seg__i {
-  width: 120rpx;
-  height: 60rpx;
-  line-height: 60rpx;
+  width: 128rpx;
+  height: 64rpx;
+  line-height: 64rpx;
   text-align: center;
-  border-radius: 30rpx;
-  background: #fff;
+  border-radius: 32rpx;
+  background: var(--card);
   color: var(--sub);
   font-size: 26rpx;
 }
 .seg__i.is-on { background: var(--brand); color: #fff; }
-.sync { margin-left: 16rpx; color: #c45c00; font-size: 22rpx; }
-.mng { margin-left: auto; color: var(--brand); font-size: 22rpx; }
+.sync { margin-left: 16rpx; color: var(--sub); font-size: 22rpx; }
+.mng { margin-left: auto; color: var(--brand-text); font-size: 24rpx; }
 
-/* 分类：5 列网格 */
+/* 分类：5 列栅格 */
 .cats {
   display: flex;
   flex-wrap: wrap;
-  padding: 12rpx 0;
+  padding: 12rpx 8rpx;
   background: var(--card);
-  border-radius: 16rpx;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
 .cat {
   width: 20%;
@@ -57,12 +55,12 @@
   flex-direction: column;
   align-items: center;
   padding: 16rpx 0;
-  border-radius: 12rpx;
+  border-radius: var(--r-m);
 }
-.cat.is-on { background: rgba(43, 108, 255, 0.1); }
+.cat.is-on { background: var(--brand-weak); }
 .cat__em { font-size: 40rpx; line-height: 1.2; }
 .cat__name { margin-top: 8rpx; font-size: 22rpx; color: var(--sub); }
-.cat.is-on .cat__name { color: var(--brand); }
+.cat.is-on .cat__name { color: var(--brand-text); }
 
 /* 加号：纯 CSS 绘制，不用字符 */
 .plus {
@@ -70,7 +68,7 @@
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  background: #f6f7f9;
+  background: var(--line2);
 }
 .plus::before,
 .plus::after {
@@ -81,18 +79,19 @@
   background: var(--brand);
   transform: translate(-50%, -50%);
 }
-.plus::before { width: 20rpx; height: 4rpx; }
-.plus::after { width: 4rpx; height: 20rpx; }
+.plus::before { width: 18rpx; height: 3rpx; }
+.plus::after { width: 3rpx; height: 18rpx; }
 
 /* 日期 */
 .date {
   display: flex;
   align-items: center;
   height: 84rpx;
-  padding: 0 24rpx;
-  margin-top: 16rpx;
+  padding: 0 28rpx;
+  margin-top: 12rpx;
   background: var(--card);
-  border-radius: 16rpx;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
 .date__k { font-size: 26rpx; color: var(--sub); }
 .date__v {
@@ -103,14 +102,15 @@
   font-size: 28rpx;
 }
 
-/* 金额显示行 */
+/* 金额：全页视觉重心 */
 .amt {
   display: flex;
   align-items: baseline;
-  padding: 20rpx 24rpx;
-  margin-top: 16rpx;
+  padding: 20rpx 28rpx;
+  margin-top: 12rpx;
   background: var(--card);
-  border-radius: 16rpx;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
 .amt__cur { font-size: 32rpx; color: var(--sub); }
 .amt__num {
@@ -122,23 +122,19 @@
 .amt__num.is-income { color: var(--income); }
 
 /* 数字键盘 */
-.kb {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8rpx;
-  margin-top: 12rpx;
-}
+.kb { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 12rpx; }
 .key {
-  width: calc((100% - 16rpx) / 3);
-  height: 84rpx;
+  width: calc((100% - 24rpx) / 3);
+  height: 80rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--card);
-  border-radius: 12rpx;
+  border-radius: var(--r-m);
+  box-shadow: var(--shadow);
 }
 .key__t { font-size: 40rpx; }
-.key.is-del { background: #eceef2; }
+.key.is-del { background: var(--line2); box-shadow: none; }
 .key__del { font-size: 36rpx; color: var(--sub); }
 
 /* 备注 */
@@ -146,10 +142,11 @@
   display: flex;
   align-items: center;
   height: 84rpx;
-  padding: 0 24rpx;
+  padding: 0 28rpx;
   margin-top: 12rpx;
   background: var(--card);
-  border-radius: 16rpx;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
 .note__k { font-size: 26rpx; color: var(--sub); }
 .note__input { flex: 1; margin-left: 20rpx; font-size: 28rpx; }
@@ -159,8 +156,8 @@
   height: 88rpx;
   line-height: 88rpx;
   text-align: center;
-  margin-top: 16rpx;
-  border-radius: 16rpx;
+  margin-top: 12rpx;
+  border-radius: var(--r-m);
   background: var(--brand);
   color: #fff;
   font-size: 32rpx;
@@ -173,57 +170,57 @@
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
   z-index: 900;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(22, 24, 28, 0.3);
   display: flex;
   align-items: flex-end;
 }
 .epanel {
   width: 100%;
   background: var(--card);
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 24rpx 28rpx 40rpx;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 32rpx 32rpx 48rpx;
 }
 .epanel__title {
   text-align: center;
-  font-size: 30rpx;
-  font-weight: 600;
-  padding-bottom: 16rpx;
+  font-size: 26rpx;
+  color: var(--sub);
+  padding-bottom: 24rpx;
 }
 .erow {
   display: flex;
   align-items: center;
-  height: 88rpx;
-  border-bottom: 2rpx solid var(--line);
+  height: 96rpx;
+  border-bottom: 1rpx solid var(--line);
 }
 .erow__k { width: 96rpx; color: var(--sub); font-size: 26rpx; }
 .erow__input { flex: 1; text-align: right; font-size: 28rpx; }
-.erow--tall { height: auto; min-height: 88rpx; padding: 20rpx 0; }
+.erow--tall { height: auto; min-height: 96rpx; padding: 24rpx 0; }
 
-.eemoji { display: flex; gap: 20rpx; margin-left: auto; }
+.eemoji { display: flex; gap: 16rpx; margin-left: auto; }
 .eemoji__i {
-  width: 80rpx;
-  height: 80rpx;
+  width: 88rpx;
+  height: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 16rpx;
-  background: #f6f7f9;
-  border: 2rpx solid transparent;
+  border-radius: var(--r-m);
+  background: var(--line2);
+  border: 1rpx solid transparent;
 }
-.eemoji__i.is-on { background: rgba(43, 108, 255, 0.12); border-color: var(--brand); }
+.eemoji__i.is-on { background: var(--brand-weak); border-color: var(--brand-line); }
 .eemoji__t { font-size: 40rpx; }
 
 .etip { padding-top: 16rpx; color: var(--sub); font-size: 22rpx; }
 
-.ebtns { display: flex; gap: 16rpx; margin-top: 28rpx; }
+.ebtns { display: flex; gap: 16rpx; margin-top: 32rpx; }
 .ebtn {
   flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
+  height: 96rpx;
+  line-height: 96rpx;
   text-align: center;
-  border-radius: 16rpx;
+  border-radius: var(--r-m);
   font-size: 30rpx;
   font-weight: 600;
 }
-.ebtn--cancel { background: #f6f7f9; color: var(--sub); }
+.ebtn--cancel { background: var(--line2); color: var(--text2); }
 .ebtn--save { background: var(--brand); color: #fff; }

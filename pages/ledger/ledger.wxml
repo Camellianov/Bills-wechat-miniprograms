@@ -9,6 +9,7 @@
   <view class="sec">
     <view class="sec__head">
       <text class="sec__t">我的账本</text>
+      <view class="ihelp" data-t="删除账本会同时删除该账本下的全部账单；至少保留一个账本。非房主的账本只能切换，不能删除。" bindtap="onTipTap">!</view>
     </view>
     <view wx:for="{{ledgers}}" wx:key="ledgerId" class="row {{item.isCurrent?'is-on':''}}">
       <view class="lgico" style="background:{{item.iconColor}}">
@@ -27,7 +28,6 @@
   </view>
 
   <view class="add" bindtap="onAddTap">+ 新建账本</view>
-  <view class="tip tip--pad">删除账本会同时删除该账本下的全部账单；至少保留一个账本。非房主的账本只能切换，不能删除。</view>
 </view>
 
 <view wx:if="{{dlg}}" class="emask" bindtap="onDlgClose" catchtouchmove="noop">

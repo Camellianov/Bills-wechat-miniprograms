@@ -54,7 +54,7 @@
     <view class="budget__bar">
       <view class="budget__fill {{isOver?'is-over':''}}" style="width:{{barPct}}%"></view>
     </view>
-    <text class="budget__tip {{isOver?'is-over':''}}">已用 {{currency}}{{usedText}} · {{budgetTip}}</text>
+    <text class="budget__tip {{isOver?'is-over':''}}">{{budgetTip}}</text>
   </view>
 
   <!-- 账单列表 -->

@@ -6,142 +6,126 @@
 .errbar {
   display: flex;
   align-items: center;
-  padding: 16rpx 28rpx;
-  background: #fff2f0;
-  border-bottom: 2rpx solid #ffd6cf;
+  padding: 24rpx 32rpx;
+  background: var(--line2);
 }
-.errbar__t { flex: 1; color: #c0341b; font-size: 24rpx; }
+.errbar__t { flex: 1; color: var(--text2); font-size: 24rpx; }
 .errbar__btn {
   padding: 8rpx 24rpx;
   border-radius: 24rpx;
-  background: var(--expense);
+  background: var(--brand);
   color: #fff;
   font-size: 24rpx;
 }
 
 .sec {
-  margin: 24rpx 28rpx 0;
+  margin: 24rpx 32rpx;
+  padding: 28rpx 24rpx;
   background: var(--card);
-  border-radius: 16rpx;
-  overflow: hidden;
+  border-radius: var(--r-l);
+  box-shadow: var(--shadow);
 }
-.sec__head {
+.sec__head { display: flex; align-items: center; padding-bottom: 20rpx; }
+.sec__t { font-size: 30rpx; font-weight: 600; }
+
+/* 辅助说明收进「!」符号 */
+.ihelp {
+  width: 36rpx;
+  height: 36rpx;
+  margin-left: auto;
   display: flex;
   align-items: center;
-  padding: 20rpx 24rpx;
-  border-bottom: 2rpx solid var(--line);
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--line2);
+  color: var(--sub);
+  font-size: 22rpx;
 }
-.sec__t { font-size: 28rpx; font-weight: 600; }
 
+/* 账本行：当前账本用浅蓝底标识 */
 .row {
   display: flex;
   align-items: center;
-  height: 104rpx;
-  padding: 0 24rpx;
-  border-bottom: 2rpx solid var(--line);
+  height: 112rpx;
+  padding: 0 20rpx;
+  border-radius: var(--r-m);
 }
-.row:last-child { border-bottom: 0; }
-.row.is-on { background: rgba(43, 108, 255, 0.06); }
-.row__main {
-  margin-left: 20rpx;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
+.row.is-on { background: var(--brand-weak); }
+.row__main { flex: 1; margin-left: 20rpx; display: flex; flex-direction: column; }
 .row__name { font-size: 28rpx; }
 .row__role { margin-top: 4rpx; color: var(--sub); font-size: 22rpx; }
-.row__cur { color: var(--brand); }
-.row__btn {
-  padding: 10rpx 24rpx;
-  border-radius: 24rpx;
-  background: #f6f7f9;
-  color: var(--sub);
-  font-size: 24rpx;
-}
-.row__btn--del {
-  margin-left: 12rpx;
-  background: rgba(255, 91, 74, 0.12);
-  color: var(--expense);
-}
+.row__cur { color: var(--brand-text); font-size: 22rpx; }
+.row__btn { margin-left: 20rpx; color: var(--brand-text); font-size: 26rpx; }
+/* 删除弱化，不用红色 */
+.row__btn--del { color: var(--sub); }
 
-.empty { padding: 32rpx 0; text-align: center; color: #c2c8d2; font-size: 26rpx; }
+.empty { padding: 60rpx 0; text-align: center; color: var(--sub); font-size: 26rpx; }
 
 .add {
-  margin: 32rpx 28rpx 0;
-  height: 88rpx;
-  line-height: 88rpx;
+  margin: 24rpx 32rpx;
+  height: 96rpx;
+  line-height: 96rpx;
   text-align: center;
-  border-radius: 16rpx;
+  border-radius: var(--r-m);
   background: var(--brand);
   color: #fff;
   font-size: 30rpx;
   font-weight: 600;
 }
 
-.tip { color: var(--sub); font-size: 22rpx; }
-.tip--pad { padding: 16rpx 28rpx 0; }
-
-/* 新建弹层 */
+/* 弹层 */
 .emask {
   position: fixed;
   left: 0; top: 0; right: 0; bottom: 0;
   z-index: 900;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(22, 24, 28, 0.3);
   display: flex;
   align-items: flex-end;
 }
 .epanel {
   width: 100%;
   background: var(--card);
-  border-radius: 24rpx 24rpx 0 0;
-  padding: 24rpx 28rpx 40rpx;
+  border-radius: 28rpx 28rpx 0 0;
+  padding: 32rpx 32rpx 48rpx;
 }
 .epanel__title {
   text-align: center;
-  font-size: 30rpx;
-  font-weight: 600;
-  padding-bottom: 16rpx;
+  font-size: 26rpx;
+  color: var(--sub);
+  padding-bottom: 24rpx;
 }
+
 .erow {
   display: flex;
   align-items: center;
-  height: 88rpx;
-  border-bottom: 2rpx solid var(--line);
+  height: 96rpx;
+  border-bottom: 1rpx solid var(--line);
 }
+.erow--tall { height: auto; min-height: 96rpx; padding: 24rpx 0; }
 .erow__k { width: 128rpx; color: var(--sub); font-size: 26rpx; }
 .erow__input { flex: 1; text-align: right; font-size: 28rpx; }
-.erow--tall { height: auto; min-height: 88rpx; padding: 20rpx 0; align-items: flex-start; }
 
-.ecolors {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
-  padding-top: 6rpx;
-}
+/* 颜色选择：选中用外环标识，不改变色块本身 */
+.ecolors { display: flex; flex-wrap: wrap; gap: 20rpx; margin-left: auto; }
 .ecolors__i {
   width: 56rpx;
   height: 56rpx;
   border-radius: 50%;
-  border: 2rpx solid rgba(0, 0, 0, 0.12);
-  box-sizing: border-box;
+  border: 1rpx solid rgba(0, 0, 0, 0.06);
 }
-.ecolors__i.is-on {
-  border: 4rpx solid var(--brand);
-  box-shadow: 0 0 0 4rpx rgba(43, 108, 255, 0.15);
-}
+.ecolors__i.is-on { box-shadow: 0 0 0 4rpx var(--brand-line); }
 
 .etip { padding-top: 16rpx; color: var(--sub); font-size: 22rpx; }
 
 .ebtns { display: flex; gap: 16rpx; margin-top: 28rpx; }
 .ebtn {
   flex: 1;
-  height: 88rpx;
-  line-height: 88rpx;
+  height: 96rpx;
+  line-height: 96rpx;
   text-align: center;
-  border-radius: 16rpx;
+  border-radius: var(--r-m);
   font-size: 30rpx;
   font-weight: 600;
 }
-.ebtn--cancel { background: #f6f7f9; color: var(--sub); }
+.ebtn--cancel { background: var(--line2); color: var(--text2); }
 .ebtn--save { background: var(--brand); color: #fff; }

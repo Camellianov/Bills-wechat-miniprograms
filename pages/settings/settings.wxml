@@ -17,6 +17,7 @@
   <view class="sec">
     <view class="sec__head">
       <text class="sec__t">货币符号</text>
+      <view class="ihelp" data-t="用于所有金额前的符号，不影响已记录的金额。" bindtap="onTipTap">!</view>
     </view>
     <view class="cur">
       <view wx:for="{{currencies}}" wx:key="v"
@@ -26,7 +27,6 @@
         <text class="cur__n">{{item.n}}</text>
       </view>
     </view>
-    <view class="tip">用于所有金额前的符号，不影响已记录的金额。</view>
   </view>
 
   <!-- 月度预算 -->
@@ -34,6 +34,7 @@
     <view class="sec__head">
       <text class="sec__t">月度预算</text>
       <text wx:if="{{hasBudget}}" class="sec__n">当前 {{currency}}{{budgetText}}</text>
+      <view class="ihelp" data-t="设置后账单页会显示当月已用比例，超支加重强调；留空保存即为清除。" bindtap="onTipTap">!</view>
     </view>
     <view class="bud">
       <text class="bud__cur">{{currency}}</text>
@@ -43,13 +44,13 @@
       <view class="btn btn--ghost" bindtap="onBudgetClear">清除预算</view>
       <view class="btn btn--go" bindtap="onBudgetSave">保存预算</view>
     </view>
-    <view class="tip">设置后账单页会显示当月已用比例，超支标红；留空保存即为清除。</view>
   </view>
 
   <!-- 导出 -->
   <view class="sec">
     <view class="sec__head">
       <text class="sec__t">导出账单</text>
+      <view class="ihelp" data-t="导出内容含日期、类型、分类、金额、备注，并附合计行，Excel 可直接打开。建议按月份分批导出，单次上限 10000 笔。" bindtap="onTipTap">!</view>
     </view>
     <view class="range">
       <picker mode="date" value="{{expFrom}}" start="2000-01-01" end="{{expTo || todayStr}}" bindchange="onExpFromChange">
@@ -75,16 +76,15 @@
     <view class="act {{exporting?'is-off':''}}" bindtap="onExportTap">
       {{exporting ? '生成文件中...' : '导出 ' + expHint}}
     </view>
-    <view class="tip">导出内容含日期 / 类型 / 分类 / 金额 / 备注，并附合计行，Excel 可直接打开。建议按月份分批导出，单次上限 10000 笔，超出会提示缩小范围。文件保存在你的云存储中，可在云开发控制台的存储里查看管理。</view>
   </view>
 
   <!-- 清空数据 -->
   <view class="sec">
     <view class="sec__head">
       <text class="sec__t">清空数据</text>
+      <view class="ihelp" data-t="仅房主可操作。清空后账单不可恢复，账本与分类会保留。" bindtap="onTipTap">!</view>
     </view>
     <view class="act act--danger {{isOwner?'':'is-off'}}" bindtap="onClearTap">清空本账本全部账单</view>
-    <view class="tip">仅房主可操作。清空后账单不可恢复，账本与分类会保留。</view>
   </view>
 </view>
 
@@ -100,7 +100,7 @@
       <view class="ebtn ebtn--cancel" bindtap="onExpCopy">复制链接</view>
       <view class="ebtn ebtn--save" bindtap="onExpSend">发送到微信</view>
     </view>
-    <view class="etip">点「发送到微信」后在好友列表里选「文件传输助手」，即可在电脑微信里打开；若手机没有该文件，可先复制链接。</view>
+    <view class="etip">在好友列表里选「文件传输助手」，即可在电脑微信打开</view>
   </view>
 </view>
 
